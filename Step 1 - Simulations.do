@@ -60,7 +60,7 @@ do "${do_files}\powersim.do"
 import spss using "${real_data}\hh.sav", clear
 
 *ssc install asgen
-
+s
 
 global assets HC10E HC11 HC14 HC15 HC17 HC19
 global foods FC1 FC2 FC3 FC4 FC5 FC6 FC7 FC8
