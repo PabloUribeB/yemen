@@ -33,7 +33,7 @@ Scenario 6: CFN:0.23 CFW:0.1  Geo:0.4  CFW-Control: 0.03
 global main 		"C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
 global data 		"${main}\01 Data"
 global real_data 	"${main}\Other stuff\ICC"
-global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen\02 Code"
+global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen"
 
 global reps 1000 // Enter desired number of Monte-Carlo simulations
 
@@ -152,7 +152,6 @@ foreach scenario in 2 6{
 			pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
 			cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 			cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd') 			///
-			mu(`=mu') sd_village(`=sd_village') sd_ind(`=sd_ind') 			///
 			survey_cfn(40) survey_cfw(40) survey_cfwc(40) survey_geo(40)	///
 			survey_pure(40) method(default)
 
@@ -165,7 +164,6 @@ foreach scenario in 2 6{
 			pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
 			cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 			cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd') 			///
-			mu(`=mu') sd_village(`=sd_village') sd_ind(`=sd_ind') 			///
 			survey_cfn(40) survey_cfw(40) survey_cfwc(40) survey_geo(40)	///
 			survey_pure(40) method(alt)
 
@@ -178,7 +176,6 @@ foreach scenario in 2 6{
 			pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
 			cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 			cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd') 			///
-			mu(`=mu') sd_village(`=sd_village') sd_ind(`=sd_ind') 			///
 			survey_cfn(40) survey_cfw(40) survey_cfwc(30) survey_geo(60)	///
 			survey_pure(30) method(alt)
 
@@ -191,7 +188,6 @@ foreach scenario in 2 6{
 			pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
 			cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 			cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd') 			///
-			mu(`=mu') sd_village(`=sd_village') sd_ind(`=sd_ind') 			///
 			survey_cfn(40) survey_cfw(50) survey_cfwc(30) survey_geo(60)	///
 			survey_pure(30) method(alt)
 
@@ -202,7 +198,7 @@ foreach scenario in 2 6{
 
 	compress
 	
-	save "${data}\simulation_results_s`scenario'.dta", replace // Save monte-carlo simulation results
+	*save "${data}\simulation_results_s`scenario'.dta", replace // Save monte-carlo simulation results
 
 	/* OLD
 	* Random pure controls

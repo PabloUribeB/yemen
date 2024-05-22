@@ -21,9 +21,6 @@ program powersim, rclass
     syntax, pc_selection(string)    ///
 			method(string)			///
 			sd(real)				///
-			mu(real)				///
-			sd_village(real)		///
-			sd_ind(real)			///
 			path(string)			///
           [ alpha(real 0.05) 		///
 			geo_effect(real 0.3) 	///
@@ -113,7 +110,14 @@ program powersim, rclass
 			expand 2 if n <= 8
 		}
 		
-		gen epsilon_v  = rnormal(0, `sd_village') // Village-level random component
+		levelsof strata_id, local(strata)
+		local gen gen
+		foreach id in `strata'{
+			
+			`gen' epsilon_v  = rnormal(0, `=sd_village_`id'') if strata_id == `id' // Village-level random component
+			local gen replace
+		}
+		
 		gen village_id = _n 		   			  // Cluster variable at the village level
 		
 		* Randomly assign groups to CfN_only and Geobundling in the CfN arm
@@ -144,13 +148,25 @@ program powersim, rclass
 		expand `survey_cfn'  if cfn_only == 1 		// Expand in CfN_only
 		expand `survey_geo'  if geo == 1 			// Expand in Geobundling
 
-		gen epsilon_i = rnormal(0, `sd_ind') // Generate observation-level random component
+		local gen gen
+		foreach id in `strata'{
+			`gen' epsilon_i = rnormal(0, `=sd_ind_`id'') if strata_id == `id' // Generate observation-level random component
+			local gen replace
+		}
 		
 		encode subd_id, gen(en_subd_id)
 		
 		* Generate the outcome variable following specified effects
-		gen y_ivds = mu + (cw_effect * cfw_only) + (cwc_effect * cfw_control) + (cn_effect * cfn_only) + (g_effect * geo) + epsilon_s + epsilon_d + epsilon_v + epsilon_i
-
+		local gen gen
+		foreach id in `strata'{
+			
+			`gen' y_ivds = `=mu_`id'' + (cw_effect * cfw_only) + 			///
+			(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
+			(g_effect * geo) + epsilon_s + epsilon_d + epsilon_v + epsilon_i if strata_id == `id' 
+			
+			local gen replace
+			
+		}
 		
 		// Regressions
 		
