@@ -74,8 +74,8 @@ foreach id in `strata'{
 
 	matrix b = e(b)
 
-	scalar sd_strata_`id' 	= exp(b[1, 2])
-	scalar sd_subd_`id' 	= exp(b[1, 3])
+	*scalar sd_strata_`id' 	= exp(b[1, 2])
+	scalar sd_subd_`id' 	= exp(b[1, 2])
 	
 }
 

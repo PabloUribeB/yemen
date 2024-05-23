@@ -90,13 +90,13 @@ levelsof HH7, local(strata)
 
 foreach id in `strata'{
 
-	mixed FC1_d || HH7: || stratum: || HH1: if HH7 == `id', stddev
+	mixed FC1_d || stratum: || HH1: if HH7 == `id', stddev
 
 	matrix b = e(b)
 
 	scalar mu_`id' 			= exp(b[1, 1])
-	scalar sd_village_`id' 	= exp(b[1, 4])
-	scalar sd_ind_`id' 		= exp(b[1, 5])
+	scalar sd_village_`id' 	= exp(b[1, 3])
+	scalar sd_ind_`id' 		= exp(b[1, 4])
 	
 }
 
