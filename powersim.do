@@ -100,7 +100,7 @@ program powersim, rclass
 		*expand 2 	if pure_control != 1 // Generate second ramification for CfN and CfW
 		expand 2 // Generate second ramification
 		
-		if "`method'" == "alt"{
+		if "`method'" == "alt"{ // Reassign 8 PC to CfN randomly
 			tempvar rand n
 			gen `rand' = runiform() if pure_control == 1
 			sort cfn cfw `rand'
@@ -118,7 +118,7 @@ program powersim, rclass
 		}
 		
 		
-		if "`errors'" == "gov_specific"{
+		if "`errors'" == "gov_specific"{ // Governorate-specific errors
 			
 			levelsof strata_id, local(strata)
 			local gen gen
@@ -132,7 +132,7 @@ program powersim, rclass
 				local gen replace
 			}
 		}
-		else{
+		else{ // National-level errors
 			gen epsilon_v0  = rnormal(0, `=sd_village') // Village-level random component baseline
 			gen epsilon_v1  = rnormal(0, `=sd_village') // Village-level random component follow-up
 		}
@@ -168,7 +168,7 @@ program powersim, rclass
 		expand `survey_cfn'  if cfn_only == 1 		// Expand in CfN_only
 		expand `survey_geo'  if geo == 1 			// Expand in Geobundling
 
-		if "`errors'" == "gov_specific"{
+		if "`errors'" == "gov_specific"{ // Governorate-specific errors
 		
 			local gen gen
 			foreach id in `strata'{
@@ -188,7 +188,7 @@ program powersim, rclass
 				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
 				(g_effect * geo) + epsilon_s + epsilon_d1 + epsilon_v1 + epsilon_i1 // Follow-up
 		}
-		else{
+		else{ // National-level errors
 			
 			gen epsilon_i0 = rnormal(0, `=sd_ind') // Generate observation-level random component baseline
 				
