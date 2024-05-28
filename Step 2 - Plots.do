@@ -22,6 +22,10 @@ global main "C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
 global data "${main}\01 Data"
 global figures "${main}\04 Figures"
 
+
+global comparisons g_cfnw g_cfn g_cfw g_all g_pure cfn_all cfw_all cfw_pure ///
+g_cfnw_c g_cfn_c g_cfw_c g_all_c g_pure_c cfn_all_c cfw_all_c cfw_pure_c
+
 * Make sure packages are installed
 cap which labvars
 if _rc ssc install labvars
@@ -36,15 +40,26 @@ set scheme white_tableau
 ****************************************************************************
 use "${data}\simulation_results.dta", clear
 			
-labvars tval_g_cfn tval_g_cfw tval_g_all tval_g_pure 			///
-tval_cfn_cfw tval_cfw_cfwc tval_cfn_pure tval_cfwc_pure 					///
-"Geobundling vs CfN-only (subd. FE)" 									 	///
-"Geobundling vs CfW-only" "Geobundling vs all controls" 					///
-"Geobundling vs pure controls" "CfN-only vs CfW-only" 						///
-"CfW-only vs CfW controls" "CfN-only vs pure controls" "CfW-controls vs pure controls"
+labvars tval_g_cfnw tval_g_cfn tval_g_cfw tval_g_all tval_g_pure 		///
+		tval_cfn_all tval_cfw_all tval_cfw_pure tval_g_cfnw_c 			///
+		tval_g_cfn_c tval_g_cfw_c tval_g_all_c tval_g_pure_c 			///
+		tval_cfn_all_c tval_cfw_all_c tval_cfw_pure_c					///
+		"Geobundling vs CfN+CfW-only"									///
+		"Geobundling vs CfN-only" "Geobundling vs CfW-only"		 		///
+		"Geobundling vs all controls" "Geobundling vs pure controls" 	///
+		"CfN-only vs all controls" "CfW-only vs all controls" 			///
+		"CfW-only vs pure controls"										///
+		"Geobundling vs CfN+CfW-only (with covariate)"					///
+		"Geobundling vs CfN-only (with covariate)" 						///
+		"Geobundling vs CfW-only (with covariate)"		 				///
+		"Geobundling vs all controls (with covariate)" 					///
+		"Geobundling vs pure controls (with covariate)" 				///
+		"CfN-only vs all controls (with covariate)" 					///
+		"CfW-only vs all controls (with covariate)" 					///
+		"CfW-only vs pure controls (with covariate)"
 
 
-forval scenario = 1/6{
+foreach scenario in 2 6{
 
 	if  `scenario' == 1 {
 		global cfn_effect 0.2
@@ -87,122 +102,150 @@ forval scenario = 1/6{
 	
 	keep if scenario == `scenario'
 	
-	** t-distributions with critical values
+	** t-distributions with critical values (national errors)
 	set graphics off
 	local i = 1
-	foreach comparison in g_cfn g_cfw g_all g_pure cfn_cfw cfw_cfwc cfn_pure cfwc_pure{ // Loop through each of the comparisons
+	foreach comparison in $comparisons { // Loop through each of the comparisons
 		
 		local critical = 1.7
 		local vallab : variable label tval_`comparison' // Get the labels for titling
 		
-		qui sum reject_`comparison' if type == 1
+		qui sum reject_`comparison' if type == 1 & errors == "national"
 		local power_0 = r(mean) * 100
 		local power_0: dis round(`power_0',.1)
 
-		qui sum reject_`comparison' if type == 2
+		qui sum reject_`comparison' if type == 2 & errors == "national"
 		local power_1 = r(mean) * 100
 		local power_1: dis round(`power_1',.1)
 		
-		qui sum reject_`comparison' if type == 0
+		qui sum reject_`comparison' if type == 0 & errors == "national"
 		local power_2 = r(mean) * 100
 		local power_2: dis round(`power_2',.1)
 		
-		qui sum reject_`comparison' if type == 3
-		local power_3 = r(mean) * 100
-		local power_3: dis round(`power_3',.1)
-		
 		* Density plots
-		tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 					///
-		(kdensity tval_`comparison' if type == 2, lcolor(dkorange))						///
-		(kdensity tval_`comparison' if type == 0, lcolor(green))						///
-		(kdensity tval_`comparison' if type == 3, lcolor(purple)),						///
-		xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 		///
-		legend(title(Scenarios, size(small))											///
-		order(1 "Default" 2 "Alternative-40" 3 "Alternative-mixed" 4 "Alternative-m2")	///
-		position(bottom) rows(1) si(vsmall)) saving(`comparison', replace) 				///
-		subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 							///
-		note("Power default = `power_0'%; Power alt-40 = `power_1'%;" "Power alt-mix = `power_2'%; Power alt-mix2 = `power_3'%", s(vsmall))
+		tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 						///
+		(kdensity tval_`comparison' if type == 2, lcolor(dkorange))							///
+		(kdensity tval_`comparison' if type == 0, lcolor(green)) if errors == "national",	///
+		xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 			///
+		legend(title(Scenarios, size(small))												///
+		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
+		position(bottom) rows(1) si(vsmall)) saving(`comparison'_nat, replace) 				///
+		subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 								///
+		note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
 		
 		local ++i
 	}
 
+	
+	** Governorate-specific errors
+	local i = 1
+	foreach comparison in $comparisons { // Loop through each of the comparisons
+		
+		local critical = 1.7
+		local vallab : variable label tval_`comparison' // Get the labels for titling
+		
+		qui sum reject_`comparison' if type == 1 & errors == "gov_specific"
+		local power_0 = r(mean) * 100
+		local power_0: dis round(`power_0',.1)
+
+		qui sum reject_`comparison' if type == 2 & errors == "gov_specific"
+		local power_1 = r(mean) * 100
+		local power_1: dis round(`power_1',.1)
+		
+		qui sum reject_`comparison' if type == 0 & errors == "gov_specific"
+		local power_2 = r(mean) * 100
+		local power_2: dis round(`power_2',.1)
+
+		
+		* Density plots
+		tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 							///
+		(kdensity tval_`comparison' if type == 2, lcolor(dkorange))								///
+		(kdensity tval_`comparison' if type == 0, lcolor(green)) if errors == "gov_specific",	///
+		xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 				///
+		legend(title(Scenarios, size(small))													///
+		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")							///
+		position(bottom) rows(1) si(vsmall)) saving(`comparison'_gov, replace) 					///
+		subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 									///
+		note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+		
+		local ++i
+	}
+	
+	
+	
 
 	set graphics on
 
-	grc1leg g_cfn.gph g_cfw.gph g_all.gph g_pure.gph cfn_cfw.gph cfw_cfwc.gph 				///
-	cfn_pure.gph cfwc_pure.gph, 															///
-	legendfrom(g_cfn.gph) rows(2) imargin(medium) xcommon									///
-	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 		///
-	CfW-controls=${cfw_spillover}), size(small))											///
-	subtitle(Distribution of t-stats, size(vsmall)) saving(s`scenario', replace)			///
-	note("{it:Note:} Default is 28 pure controls (PC) and 40 surveys per village. Alternative-40 is taking 8 PC to CfN with same number of surveys. Alternative-mixed is doing the same with the PC but varying number of surveys per treatment" "(30 in controls, 50 CfW, 60 Geo, and 40 CfN. Alternative-m2 is the same but decreasing CfW to 40. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	grc1leg g_cfnw_nat.gph g_cfn_nat.gph g_cfw_nat.gph g_all_nat.gph g_pure_nat.gph 	///
+	cfn_all_nat.gph cfw_all_nat.gph cfw_pure_nat.gph, 									///
+	legendfrom(g_cfnw_nat.gph) rows(2) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	saving(s`scenario'_nat, replace)													///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
 
 	graph display, xsize(9)
 	
-	graph export "${figures}\Power_fixed_s`scenario'.png", replace // Save final graph
+	graph export "${figures}\Power_s`scenario'_national.png", replace // Save final graph
 
 
+	grc1leg g_cfnw_c_nat.gph g_cfn_c_nat.gph g_cfw_c_nat.gph g_all_c_nat.gph 			///
+	g_pure_c_nat.gph cfn_all_c_nat.gph cfw_all_c_nat.gph cfw_pure_c_nat.gph,			///
+	legendfrom(g_cfnw_c_nat.gph) rows(2) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	saving(s`scenario'_nat_c, replace)													///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
 
-	foreach comparison in g_cfn g_cfw g_all g_pure cfn_cfw cfw_cfwc cfn_pure cfwc_pure s`scenario'{ // erase temp graphs
+	graph display, xsize(9)
+	
+	graph export "${figures}\Power_s`scenario'_national_controls.png", replace // Save final graph
+	
+
+	grc1leg g_cfnw_gov.gph g_cfn_gov.gph g_cfw_gov.gph g_all_gov.gph g_pure_gov.gph 	///
+	cfn_all_gov.gph cfw_all_gov.gph cfw_pure_gov.gph, 									///
+	legendfrom(g_cfnw_gov.gph) rows(2) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall))		///
+	saving(s`scenario'_gov, replace)													///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+
+	graph display, xsize(9)
+	
+	graph export "${figures}\Power_s`scenario'_gov.png", replace // Save final graph
+
+
+	grc1leg g_cfnw_c_gov.gph g_cfn_c_gov.gph g_cfw_c_gov.gph g_all_c_gov.gph 			///
+	g_pure_c_gov.gph cfn_all_c_gov.gph cfw_all_c_gov.gph cfw_pure_c_gov.gph,			///
+	legendfrom(g_cfnw_c_gov.gph) rows(2) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	saving(s`scenario'_gov_c, replace)													///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+
+	graph display, xsize(9)
+	
+	graph export "${figures}\Power_s`scenario'_gov_controls.png", replace // Save final graph
+	
+	
+	
+	foreach comparison in g_cfnw_nat g_cfn_nat g_cfw_nat g_all_nat g_pure_nat 	///
+	cfn_all_nat cfw_all_nat cfw_pure_nat g_cfnw_c_nat g_cfn_c_nat g_cfw_c_nat 	///
+	g_all_c_nat g_pure_c_nat cfn_all_c_nat cfw_all_c_nat cfw_pure_c_nat 		///
+	g_cfnw_gov g_cfn_gov g_cfw_gov g_all_gov g_pure_gov cfn_all_gov cfw_all_gov ///
+	cfw_pure_gov g_cfnw_c_gov g_cfn_c_gov g_cfw_c_gov g_all_c_gov g_pure_c_gov 	///
+	cfn_all_c_gov cfw_all_c_gov cfw_pure_c_gov s`scenario'_nat s`scenario'_gov 	///
+	s`scenario'_gov_c s`scenario'_nat_c{ // erase temp graphs
+		
 		erase `comparison'.gph
+		
 	}
+	
 	restore
 }
 ******************************************************************************
 ******************************************************************************
-
-
-/* RANDOM VS FIXED (OLD)
-
-** t-distributions with critical values (1.96)
-set graphics off
-local i = 1
-foreach comparison in g_all g_pure g_cfn g_cfw cfw_cfwc cfw_cfn{ // Loop through each of the sample sizes
-	
-	local vallab : variable label tval_`comparison' // Get the labels for titling
-	
-	if `i' == 1{
-		local critical = 2.01
-	}
-	else if `i' == 2{
-		local critical = 2.045
-	}
-	else{
-		local critical = 2.03
-	}
-	
-	qui sum reject_`comparison' if type == 0
-	local power_0 = r(mean) * 100
-	local power_0: dis round(`power_0',.1)
-
-	qui sum reject_`comparison' if type == 1
-	local power_1 = r(mean) * 100
-	local power_1: dis round(`power_1',.1)
-
-	* Density plots
-	tw (kdensity tval_`comparison' if type == 0, lcolor(dknavy)) 					///
-	(kdensity tval_`comparison' if type == 1, lcolor(dkorange)),					///
-	xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 		///
-	legend(title(Scenarios, size(medsmall))											///
-	order(1 "Random assignment to PC" 2 "Fixed assignment") position(bottom) 		///
-	rows(1) si(small)) saving(`comparison', replace) subtitle(`vallab')				///
-	note("Power under random = `power_0'%; Power under fixed = `power_1'%", s(vsmall))
-	
-	local ++i
-}
-
-
-set graphics on
-
-grc1leg g_cfn.gph g_cfw.gph g_all.gph g_pure.gph cfw_cfwc.gph cfw_cfn.gph, 				///
-legendfrom(g_cfn.gph) rows(2) imargin(medium) xcommon									///
-title(Power simulations, size(medium)) subtitle(Distribution of t-stats, size(small)) 	///
-note("{it:Note:} Dashed lines are critical values. Critical value when comparing against a treatment = 2.03 (35 DF); When comparing against all controls = 2.01 (49 DF);" "When comparing against pure controls = 2.045 (29 DF); Number of simulations = 1000.", s(vsmall)) 
-
-graph export "${figures}\Power.png", replace // Save final graph
-
-
-
-foreach comparison in g_cfn g_cfw g_all g_pure cfw_cfwc cfw_cfn{ // erase temp graphs
-	erase `comparison'.gph
-}
