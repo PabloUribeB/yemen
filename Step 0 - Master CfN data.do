@@ -34,6 +34,16 @@ import spss using "${real_data}\hh.sav", clear
 *ssc install asgen
 
 
+/*
+FC1 not eating enough for lack of money
+FC2 Unable to eat healthy and nutritious food for lack of money
+FC4 Skip a meal
+FC5 Ate less than thought
+FC6 Ran out of food
+FC7 Hungry but did not eat
+FC8 Went without eating for whole day
+*/
+
 global assets HC10E HC11 HC14 HC15 HC17 HC19
 global foods FC1 FC2 FC3 FC4 FC5 FC6 FC7 FC8
 
