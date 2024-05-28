@@ -37,38 +37,38 @@ global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen"
 
 global reps 1000 // Enter desired number of Monte-Carlo simulations
 
-global stats reject_g_cfn = r(reject_g_cfn) 			///
+global stats reject_g_cfnw = r(reject_g_cfnw) 			///
+			reject_g_cfn = r(reject_g_cfn) 				///
 			reject_g_cfw = r(reject_g_cfw) 				///
-			reject_g_all = r(reject_g_all) 				///
+			reject_g_all = r(reject_g_all)				///
 			reject_g_pure = r(reject_g_pure) 			///
-			reject_cfn_cfw = r(reject_cfn_cfw)			///
-			reject_cfw_cfwc = r(reject_cfw_cfwc) 		///
-			reject_cfn_pure = r(reject_cfn_pure) 		///
-			reject_cfwc_pure = r(reject_cfwc_pure)		///
+			reject_cfn_all = r(reject_cfn_all) 			///
+			reject_cfw_all = r(reject_cfw_all)			///
+			reject_cfw_pure = r(reject_cfw_pure)		///
+			reject_g_cfnw_c = r(reject_g_cfnw_c) 		///
 			reject_g_cfn_c = r(reject_g_cfn_c) 			///
 			reject_g_cfw_c = r(reject_g_cfw_c) 			///
-			reject_g_all_c = r(reject_g_all_c) 			///
+			reject_g_all_c = r(reject_g_all_c)			///
 			reject_g_pure_c = r(reject_g_pure_c) 		///
-			reject_cfw_cfwc_c = r(reject_cfw_cfwc_c) 	///
-			reject_cfn_cfw_c = r(reject_cfn_cfw_c) 		///
-			reject_cfn_pure_c = r(reject_cfn_pure_c) 	///
-			reject_cfwc_pure_c = r(reject_cfwc_pure_c)	///
+			reject_cfn_all_c = r(reject_cfn_all_c) 		///
+			reject_cfw_all_c = r(reject_cfw_all_c)		///
+			reject_cfw_pure_c = r(reject_cfw_pure_c)	///
+			tval_g_cfnw = r(tval_g_cfnw) 				///
 			tval_g_cfn = r(tval_g_cfn) 					///
 			tval_g_cfw = r(tval_g_cfw) 					///
-			tval_g_all = r(tval_g_all) 					///
+			tval_g_all = r(tval_g_all)					///
 			tval_g_pure = r(tval_g_pure) 				///
-			tval_cfn_cfw = r(tval_cfn_cfw)				///
-			tval_cfw_cfwc = r(tval_cfw_cfwc) 			///
-			tval_cfn_pure = r(tval_cfn_pure) 			///
-			tval_cfwc_pure = r(tval_cfwc_pure)			///
+			tval_cfn_all = r(tval_cfn_all) 				///
+			tval_cfw_all = r(tval_cfw_all)				///
+			tval_cfw_pure = r(tval_cfw_pure)			///
+			tval_g_cfnw_c = r(tval_g_cfnw_c) 			///
 			tval_g_cfn_c = r(tval_g_cfn_c) 				///
 			tval_g_cfw_c = r(tval_g_cfw_c) 				///
-			tval_g_all_c = r(tval_g_all_c) 				///
+			tval_g_all_c = r(tval_g_all_c)				///
 			tval_g_pure_c = r(tval_g_pure_c) 			///
-			tval_cfw_cfwc_c = r(tval_cfw_cfwc_c) 		///
-			tval_cfn_cfw_c = r(tval_cfn_cfw_c) 			///
-			tval_cfn_pure_c = r(tval_cfn_pure_c) 		///
-			tval_cfwc_pure_c = r(tval_cfwc_pure_c)
+			tval_cfn_all_c = r(tval_cfn_all_c) 			///
+			tval_cfw_all_c = r(tval_cfw_all_c)			///
+			tval_cfw_pure_c = r(tval_cfw_pure_c)
 			
 * Call the program
 do "${do_files}\powersim.do"
@@ -180,7 +180,7 @@ foreach error in national gov_specific{
 			global cfw_spillover 0.03
 		}
 
-		* Fixed Pure Controls with default method (40 surveys per village and 28 PCs)
+		/* Fixed Pure Controls with default method (40 surveys per village and 28 PCs)
 		simulate ${stats}, reps(${reps}): powersim, 							///
 				pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
 				cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
@@ -190,7 +190,7 @@ foreach error in national gov_specific{
 
 		tempfile fixed_default
 		save `fixed_default', replace
-
+		*/
 
 		* Fixed Pure Controls with alt method (40 surveys per village and 20 PCs)
 		simulate ${stats}, reps(${reps}): powersim, 							///
@@ -202,9 +202,28 @@ foreach error in national gov_specific{
 
 		tempfile fixed_alt40
 		save `fixed_alt40', replace
+		
+		
+		simulate ${stats}, reps(${reps}): powersim, 							///
+				pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
+				cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
+				cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd') 			///
+				survey_cfn(50) survey_cfw(50) survey_cfwc(50) survey_geo(50)	///
+				survey_pure(50) method(alt) errors(`error')
+
+		tempfile fixed_alt50
+		save `fixed_alt50', replace
+		
+		
+		simulate ${stats}, reps(${reps}): powersim, 							///
+				pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
+				cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
+				cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd') 			///
+				survey_cfn(60) survey_cfw(60) survey_cfwc(60) survey_geo(60)	///
+				survey_pure(60) method(alt) errors(`error')
 
 		
-		* Fixed Pure Controls with alt method (Diff surveys per village and 20 PCs. CfW 40)
+		/* Fixed Pure Controls with alt method (Diff surveys per village and 20 PCs. CfW 40)
 		simulate ${stats}, reps(${reps}): powersim, 							///
 				pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
 				cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
@@ -224,9 +243,11 @@ foreach error in national gov_specific{
 				survey_cfn(40) survey_cfw(50) survey_cfwc(30) survey_geo(60)	///
 				survey_pure(30) method(alt) errors(`error')
 
-		append using `fixed_default' `fixed_alt40' `fixed_diff', gen(type)
+		*/
+		
+		append using `fixed_alt40' `fixed_alt50', gen(type)
 
-		label def types 0 "fixed_diff" 1 "fixed_default" 2 "fixed_40" 3 "fixed_diff_2", replace
+		label def types 0 "alt_60" 1 "alt_40" 2 "alt_50", replace
 		label val type types
 
 		gen errors = "`error'"
