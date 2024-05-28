@@ -61,7 +61,7 @@ program powersim, rclass
 		global path "`path'"
 	}
 	
-	quietly{
+	*quietly{
 		
 		drop _all
 		
@@ -109,12 +109,12 @@ program powersim, rclass
 			drop if `n' <= 8
 			
 			tempvar rand n
-			gen rand = runiform() if cfn == 1
-			sort cfw pure_control rand
+			gen `rand' = runiform() if cfn == 1
+			sort cfw pure_control `rand'
 			
-			gen n = _n if pure_control == 0 & cfw == 0
+			gen `n' = _n if pure_control == 0 & cfw == 0
 			
-			expand 2 if n <= 8
+			expand 2 if `n' <= 8
 		}
 		
 		
@@ -210,6 +210,22 @@ program powersim, rclass
 		
 		// Regressions
 		
+		***** Geobundling vs CfN+CfW-only
+		reg y_ivds1 geo i.strata_id if geo == 1 | cfn_only == 1 | cfw_only == 1, cluster(village_id)
+
+		local reject_g_cfnw = cond(r(table)[4,1] < `alpha', 1, 0)
+		
+		local tval_g_cfnw = r(table)[3,1]
+		
+		* Controls
+		reg y_ivds1 geo y_ivds0 i.strata_id if geo == 1 | cfn_only == 1 | cfw_only == 1, cluster(village_id)
+
+		local reject_g_cfnw_c = cond(r(table)[4,1] < `alpha', 1, 0)
+		
+		local tval_g_cfnw_c = r(table)[3,1]
+		
+		
+		
 		***** Geobundling vs CfN
 		reg y_ivds1 geo i.en_subd_id if geo == 1 | cfn_only == 1, cluster(village_id)
 
@@ -255,10 +271,10 @@ program powersim, rclass
 		local reject_g_all_c = cond(r(table)[4,1] < `alpha', 1, 0)
 				
 		local tval_g_all_c = r(table)[3,1]
-
-
 		
-		***** Geobundling vs pure control
+		
+		
+		***** Geobundling vs pure controls
 		reg y_ivds1 geo i.strata_id if (geo == 1 | pure_control == 1), cluster(village_id)
 
 		local reject_g_pure = cond(r(table)[4,1] < `alpha', 1, 0)
@@ -271,110 +287,98 @@ program powersim, rclass
 		local reject_g_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
 				
 		local tval_g_pure_c = r(table)[3,1]
-			
-		
-		
-		***** CfN vs CfW only
-		reg y_ivds1 cfn_only i.strata_id if (cfw_only == 1 | cfn_only == 1), cluster(village_id)
-
-		local reject_cfn_cfw = cond(r(table)[4,1] < `alpha', 1, 0)
-
-		local tval_cfn_cfw = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 cfn_only y_ivds0 i.strata_id if (cfw_only == 1 | cfn_only == 1), cluster(village_id)
-
-		local reject_cfn_cfw_c = cond(r(table)[4,1] < `alpha', 1, 0)
-
-		local tval_cfn_cfw_c = r(table)[3,1]
 		
 			
+		
+		
+		***** CfN vs all controls
+		reg y_ivds1 cfn_only i.strata_id if (cfn_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
+
+		local reject_cfn_all = cond(r(table)[4,1] < `alpha', 1, 0)
+
+		local tval_cfn_all = r(table)[3,1]
+		
+		* Controls
+		reg y_ivds1 cfn_only y_ivds0 i.strata_id if (cfn_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
+
+		local reject_cfn_all_c = cond(r(table)[4,1] < `alpha', 1, 0)
+
+		local tval_cfn_all_c = r(table)[3,1]
+		
 			
-		***** CfW only vs CfW control
-		reg y_ivds1 cfw_only i.en_subd_id if (cfw == 1), cluster(village_id)
+			
+		***** CfW only vs all controls
+		reg y_ivds1 cfw_only i.en_subd_id if (cfw_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
 
-		local reject_cfw_cfwc = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_cfw_all = cond(r(table)[4,1] < `alpha', 1, 0)
 
-		local tval_cfw_cfwc = r(table)[3,1]
+		local tval_cfw_all = r(table)[3,1]
 		
 		
 		* Controls
-		reg y_ivds1 cfw_only y_ivds0 i.en_subd_id if (cfw == 1), cluster(village_id)
+		reg y_ivds1 cfw_only y_ivds0 i.en_subd_id if (cfw_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
 
-		local reject_cfw_cfwc_c = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_cfw_all_c = cond(r(table)[4,1] < `alpha', 1, 0)
 
-		local tval_cfw_cfwc_c = r(table)[3,1]
+		local tval_cfw_all_c = r(table)[3,1]
 		
 		
 		
-		***** CfN vs pure control
-		reg y_ivds1 cfn_only i.strata_id if (cfn_only == 1 | pure_control == 1), cluster(village_id)
+		
+		***** CfW-only vs pure control
+		reg y_ivds1 cfw_only i.strata_id if (cfw_only == 1 | pure_control == 1), cluster(village_id)
 
-		local reject_cfn_pure = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_cfw_pure = cond(r(table)[4,1] < `alpha', 1, 0)
 				
-		local tval_cfn_pure = r(table)[3,1]
+		local tval_cfw_pure = r(table)[3,1]
 		
 		* Controls
-		reg y_ivds1 cfn_only y_ivds0 i.strata_id if (cfn_only == 1 | pure_control == 1), cluster(village_id)
+		reg y_ivds1 cfw_only y_ivds0 i.strata_id if (cfw_only == 1 | pure_control == 1), cluster(village_id)
 
-		local reject_cfn_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_cfw_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
 				
-		local tval_cfn_pure_c = r(table)[3,1]
-		
-		
-		
-		***** CfW controls vs pure control
-		reg y_ivds1 cfw_control i.strata_id if (cfw_control == 1 | pure_control == 1), cluster(village_id)
+		local tval_cfw_pure_c = r(table)[3,1]
 
-		local reject_cfwc_pure = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_cfwc_pure = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 cfw_control y_ivds0 i.strata_id if (cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfwc_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_cfwc_pure_c = r(table)[3,1]
-
-	}
+	*}
 	
 	// RETURN RESULTS
-    return scalar reject_g_cfn 	   = `reject_g_cfn'
-	return scalar reject_g_cfw 	   = `reject_g_cfw'
-	return scalar reject_g_all 	   = `reject_g_all'
-	return scalar reject_g_pure    = `reject_g_pure'
-	return scalar reject_cfw_cfwc  = `reject_cfw_cfwc'
-	return scalar reject_cfn_cfw   = `reject_cfn_cfw'
-	return scalar reject_cfn_pure  = `reject_cfn_pure'
-	return scalar reject_cfwc_pure = `reject_cfwc_pure'
+	return scalar reject_g_cfnw 	= `reject_g_cfnw'
+	return scalar reject_g_cfn 		= `reject_g_cfn'
+	return scalar reject_g_cfw 		= `reject_g_cfw'
+	return scalar reject_g_all 		= `reject_g_all'
+	return scalar reject_g_pure 	= `reject_g_pure'
+	return scalar reject_cfn_all 	= `reject_cfn_all' 
+	return scalar reject_cfw_all 	= `reject_cfw_all' 
+	return scalar reject_cfw_pure	= `reject_cfw_pure'
+
 	
-	return scalar tval_g_cfn 	  = `tval_g_cfn'
-	return scalar tval_g_cfw 	  = `tval_g_cfw'
-	return scalar tval_g_all 	  = `tval_g_all'
-	return scalar tval_g_pure 	  = `tval_g_pure'
-	return scalar tval_cfw_cfwc   = `tval_cfw_cfwc'
-	return scalar tval_cfn_cfw    = `tval_cfn_cfw'
-	return scalar tval_cfn_pure   = `tval_cfn_pure'
-	return scalar tval_cfwc_pure  = `tval_cfwc_pure'
+	return scalar tval_g_cfnw 	= `tval_g_cfnw'
+	return scalar tval_g_cfn 	= `tval_g_cfn'
+	return scalar tval_g_cfw 	= `tval_g_cfw'
+	return scalar tval_g_all 	= `tval_g_all'
+	return scalar tval_g_pure 	= `tval_g_pure'
+	return scalar tval_cfn_all 	= `tval_cfn_all' 
+	return scalar tval_cfw_all 	= `tval_cfw_all' 
+	return scalar tval_cfw_pure	= `tval_cfw_pure'
 	
-	return scalar reject_g_cfn_c     = `reject_g_cfn_c'
-	return scalar reject_g_cfw_c     = `reject_g_cfw_c'
-	return scalar reject_g_all_c     = `reject_g_all_c'
-	return scalar reject_g_pure_c    = `reject_g_pure_c'
-	return scalar reject_cfw_cfwc_c  = `reject_cfw_cfwc_c'
-	return scalar reject_cfn_cfw_c   = `reject_cfn_cfw_c'
-	return scalar reject_cfn_pure_c  = `reject_cfn_pure_c'
-	return scalar reject_cfwc_pure_c = `reject_cfwc_pure_c'
 	
-	return scalar tval_g_cfn_c 	  	= `tval_g_cfn_c'
-	return scalar tval_g_cfw_c 	  	= `tval_g_cfw_c'
-	return scalar tval_g_all_c 	  	= `tval_g_all_c'
-	return scalar tval_g_pure_c 	= `tval_g_pure_c'
-	return scalar tval_cfw_cfwc_c   = `tval_cfw_cfwc_c'
-	return scalar tval_cfn_cfw_c    = `tval_cfn_cfw_c'
-	return scalar tval_cfn_pure_c   = `tval_cfn_pure_c'
-	return scalar tval_cfwc_pure_c  = `tval_cfwc_pure_c'
+	return scalar reject_g_cfnw_c 	= `reject_g_cfnw_c'
+	return scalar reject_g_cfn_c	= `reject_g_cfn_c'
+	return scalar reject_g_cfw_c	= `reject_g_cfw_c'
+	return scalar reject_g_all_c	= `reject_g_all_c'
+	return scalar reject_g_pure_c	= `reject_g_pure_c'
+	return scalar reject_cfn_all_c	= `reject_cfn_all_c' 
+	return scalar reject_cfw_all_c 	= `reject_cfw_all_c' 
+	return scalar reject_cfw_pure_c	= `reject_cfw_pure_c'
+	
+	return scalar tval_g_cfnw_c 	= `tval_g_cfnw_c'
+	return scalar tval_g_cfn_c		= `tval_g_cfn_c'
+	return scalar tval_g_cfw_c		= `tval_g_cfw_c'
+	return scalar tval_g_all_c		= `tval_g_all_c'
+	return scalar tval_g_pure_c		= `tval_g_pure_c'
+	return scalar tval_cfn_all_c	= `tval_cfn_all_c' 
+	return scalar tval_cfw_all_c 	= `tval_cfw_all_c' 
+	return scalar tval_cfw_pure_c	= `tval_cfw_pure_c'
 	
 	
 end
