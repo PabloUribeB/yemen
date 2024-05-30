@@ -21,10 +21,11 @@
 global main "C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
 global data "${main}\01 Data"
 global figures "${main}\04 Figures"
+cap mkdir "${figures}\betas"
 
 
-global comparisons g_cfnw g_cfn g_cfw g_all g_pure cfn_all cfw_all cfw_pure ///
-g_cfnw_c g_cfn_c g_cfw_c g_all_c g_pure_c cfn_all_c cfw_all_c cfw_pure_c
+global comparisons beta1_1 beta2_1 beta3_1 beta4_1 beta2_2 beta4_2 		///
+beta1_1_c beta2_1_c beta3_1_c beta4_1_c beta2_2_c beta4_2_c 
 
 * Make sure packages are installed
 cap which labvars
@@ -40,23 +41,14 @@ set scheme white_tableau
 ****************************************************************************
 use "${data}\simulation_results.dta", clear
 			
-labvars tval_g_cfnw tval_g_cfn tval_g_cfw tval_g_all tval_g_pure 		///
-		tval_cfn_all tval_cfw_all tval_cfw_pure tval_g_cfnw_c 			///
-		tval_g_cfn_c tval_g_cfw_c tval_g_all_c tval_g_pure_c 			///
-		tval_cfn_all_c tval_cfw_all_c tval_cfw_pure_c					///
-		"Geobundling vs CfN+CfW-only"									///
-		"Geobundling vs CfN-only" "Geobundling vs CfW-only"		 		///
-		"Geobundling vs all controls" "Geobundling vs pure controls" 	///
-		"CfN-only vs all controls" "CfW-only vs all controls" 			///
-		"CfW-only vs pure controls"										///
-		"Geobundling vs CfN+CfW-only (with covariate)"					///
-		"Geobundling vs CfN-only (with covariate)" 						///
-		"Geobundling vs CfW-only (with covariate)"		 				///
-		"Geobundling vs all controls (with covariate)" 					///
-		"Geobundling vs pure controls (with covariate)" 				///
-		"CfN-only vs all controls (with covariate)" 					///
-		"CfW-only vs all controls (with covariate)" 					///
-		"CfW-only vs pure controls (with covariate)"
+labvars beta1_1 beta2_1 beta3_1 beta4_1 beta2_2 beta4_2 beta1_1_c 				///
+		beta2_1_c beta3_1_c beta4_1_c beta2_2_c beta4_2_c						///
+		"1 (CfN subdistrict)" "2 (CfW village)" 								///
+		"3 (At least 1 CfW subd.)" "4 Geobundling" "2 (CfW village)" 			///
+		"4 Geobundling" "1 (CfN subdistrict) with baseline"						///
+		"2 (CfW village) with baseline" 										///
+		"3 (At least 1 CfW subd.) with baseline" "4 Geobundling with baseline" 	///
+		"2 (CfW village) with baseline" "4 Geobundling with baseline"
 
 
 foreach scenario in 2 6{
@@ -102,6 +94,11 @@ foreach scenario in 2 6{
 	
 	keep if scenario == `scenario'
 	
+	
+	****************************************************************
+	**# 				t-stat distributions					  **
+	****************************************************************
+	
 	** t-distributions with critical values (national errors)
 	set graphics off
 	local i = 1
@@ -130,7 +127,7 @@ foreach scenario in 2 6{
 		legend(title(Scenarios, size(small))												///
 		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
 		position(bottom) rows(1) si(vsmall)) saving(`comparison'_nat, replace) 				///
-		subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 								///
+		subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 								///
 		note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
 		
 		local ++i
@@ -165,7 +162,7 @@ foreach scenario in 2 6{
 		legend(title(Scenarios, size(small))													///
 		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")							///
 		position(bottom) rows(1) si(vsmall)) saving(`comparison'_gov, replace) 					///
-		subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 									///
+		subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 									///
 		note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
 		
 		local ++i
@@ -176,76 +173,292 @@ foreach scenario in 2 6{
 
 	set graphics on
 
-	grc1leg g_cfnw_nat.gph g_cfn_nat.gph g_cfw_nat.gph g_all_nat.gph g_pure_nat.gph 	///
-	cfn_all_nat.gph cfw_all_nat.gph cfw_pure_nat.gph, 									///
-	legendfrom(g_cfnw_nat.gph) rows(2) imargin(medium) xcommon							///
+	
+	***** National level regression 1
+	grc1leg beta1_1_nat.gph beta2_1_nat.gph beta3_1_nat.gph beta4_1_nat.gph, 			///
+	legendfrom(beta1_1_nat.gph) rows(2) imargin(medium) xcommon							///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
-	saving(s`scenario'_nat, replace)													///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
-
-	graph display, xsize(9)
 	
-	graph export "${figures}\Power_s`scenario'_national.png", replace // Save final graph
+	graph export "${figures}\Power_s`scenario'_national_1.png", replace // Save final graph
 
 
-	grc1leg g_cfnw_c_nat.gph g_cfn_c_nat.gph g_cfw_c_nat.gph g_all_c_nat.gph 			///
-	g_pure_c_nat.gph cfn_all_c_nat.gph cfw_all_c_nat.gph cfw_pure_c_nat.gph,			///
-	legendfrom(g_cfnw_c_nat.gph) rows(2) imargin(medium) xcommon							///
+	grc1leg beta1_1_c_nat.gph beta2_1_c_nat.gph beta3_1_c_nat.gph beta4_1_c_nat.gph,	///
+	legendfrom(beta1_1_c_nat.gph) rows(2) imargin(medium) xcommon						///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
-	saving(s`scenario'_nat_c, replace)													///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
-
-	graph display, xsize(9)
 	
-	graph export "${figures}\Power_s`scenario'_national_controls.png", replace // Save final graph
+	graph export "${figures}\Power_s`scenario'_national_controls_1.png", replace // Save final graph
 	
 
-	grc1leg g_cfnw_gov.gph g_cfn_gov.gph g_cfw_gov.gph g_all_gov.gph g_pure_gov.gph 	///
-	cfn_all_gov.gph cfw_all_gov.gph cfw_pure_gov.gph, 									///
-	legendfrom(g_cfnw_gov.gph) rows(2) imargin(medium) xcommon							///
+	***** Governorate level regression 1
+	grc1leg beta1_1_gov.gph beta2_1_gov.gph beta3_1_gov.gph beta4_1_gov.gph, 			///
+	legendfrom(beta1_1_gov.gph) rows(2) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall)) 		///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\Power_s`scenario'_gov_1.png", replace // Save final graph
+
+
+	grc1leg beta1_1_c_gov.gph beta2_1_c_gov.gph beta3_1_c_gov.gph beta4_1_c_gov.gph,	///
+	legendfrom(beta1_1_c_gov.gph) rows(2) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall)) 		///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\Power_s`scenario'_gov_controls_1.png", replace // Save final graph
+	
+	
+	
+	***** National level regression 2
+	grc1leg beta2_2_nat.gph beta4_2_nat.gph, 											///
+	legendfrom(beta2_2_nat.gph) rows(1) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (National errors), size(vsmall))					///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\Power_s`scenario'_national_2.png", replace // Save final graph
+
+
+	grc1leg beta2_2_c_nat.gph beta4_2_c_nat.gph,										///
+	legendfrom(beta2_2_c_nat.gph) rows(1) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\Power_s`scenario'_national_controls_2.png", replace // Save final graph
+	
+	
+	***** Governorate level regression 2
+	grc1leg beta2_2_gov.gph beta4_2_gov.gph, 											///
+	legendfrom(beta2_2_gov.gph) rows(1) imargin(medium) xcommon							///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall))		///
-	saving(s`scenario'_gov, replace)													///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
-
-	graph display, xsize(9)
 	
-	graph export "${figures}\Power_s`scenario'_gov.png", replace // Save final graph
+	graph export "${figures}\Power_s`scenario'_gov_2.png", replace // Save final graph
 
 
-	grc1leg g_cfnw_c_gov.gph g_cfn_c_gov.gph g_cfw_c_gov.gph g_all_c_gov.gph 			///
-	g_pure_c_gov.gph cfn_all_c_gov.gph cfw_all_c_gov.gph cfw_pure_c_gov.gph,			///
-	legendfrom(g_cfnw_c_gov.gph) rows(2) imargin(medium) xcommon						///
+	grc1leg beta2_2_c_gov.gph beta4_2_c_gov.gph,										///
+	legendfrom(beta2_2_c_gov.gph) rows(1) imargin(medium) xcommon						///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
-	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
-	saving(s`scenario'_gov_c, replace)													///
+	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall)) 				///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
-
-	graph display, xsize(9)
 	
-	graph export "${figures}\Power_s`scenario'_gov_controls.png", replace // Save final graph
+	graph export "${figures}\Power_s`scenario'_gov_controls_2.png", replace // Save final graph
 	
 	
 	
-	foreach comparison in g_cfnw_nat g_cfn_nat g_cfw_nat g_all_nat g_pure_nat 	///
-	cfn_all_nat cfw_all_nat cfw_pure_nat g_cfnw_c_nat g_cfn_c_nat g_cfw_c_nat 	///
-	g_all_c_nat g_pure_c_nat cfn_all_c_nat cfw_all_c_nat cfw_pure_c_nat 		///
-	g_cfnw_gov g_cfn_gov g_cfw_gov g_all_gov g_pure_gov cfn_all_gov cfw_all_gov ///
-	cfw_pure_gov g_cfnw_c_gov g_cfn_c_gov g_cfw_c_gov g_all_c_gov g_pure_c_gov 	///
-	cfn_all_c_gov cfw_all_c_gov cfw_pure_c_gov s`scenario'_nat s`scenario'_gov 	///
-	s`scenario'_gov_c s`scenario'_nat_c{ // erase temp graphs
+	foreach comparison in beta1_1_nat beta2_1_nat beta3_1_nat beta4_1_nat beta2_2_nat	///
+	beta4_2_nat beta1_1_c_nat beta2_1_c_nat beta3_1_c_nat beta4_1_c_nat beta2_2_c_nat 	///
+	beta4_2_c_nat beta1_1_gov beta2_1_gov beta3_1_gov beta4_1_gov beta2_2_gov 			///
+	beta4_2_gov beta1_1_c_gov beta2_1_c_gov beta3_1_c_gov beta4_1_c_gov beta2_2_c_gov 	///
+	beta4_2_c_gov{ // erase temp graphs
 		
 		erase `comparison'.gph
 		
 	}
 	
+	
+	
+	
+	****************************************************************
+	**# 				Betas distributions						  **
+	****************************************************************
+	
+	
+	** t-distributions with critical values (national errors)
+	set graphics off
+	local i = 1
+	foreach comparison in $comparisons { // Loop through each of the comparisons
+		
+		local critical = 1.7
+		local vallab : variable label tval_`comparison' // Get the labels for titling
+		
+		qui sum reject_`comparison' if type == 1 & errors == "national"
+		local power_0 = r(mean) * 100
+		local power_0: dis round(`power_0',.1)
+
+		qui sum reject_`comparison' if type == 2 & errors == "national"
+		local power_1 = r(mean) * 100
+		local power_1: dis round(`power_1',.1)
+		
+		qui sum reject_`comparison' if type == 0 & errors == "national"
+		local power_2 = r(mean) * 100
+		local power_2: dis round(`power_2',.1)
+		
+		* Density plots
+		tw (kdensity `comparison' if type == 1, lcolor(dknavy)) 						///
+		(kdensity `comparison' if type == 2, lcolor(dkorange))							///
+		(kdensity `comparison' if type == 0, lcolor(green)) if errors == "national",	///
+		xline(`critical' -`critical', lcolor(gray)) xtitle({&beta}) ytitle(Density) 	///
+		legend(title(Scenarios, size(small))											///
+		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")					///
+		position(bottom) rows(1) si(vsmall)) saving(`comparison'_nat, replace) 			///
+		subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 					///
+		note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+		
+		local ++i
+	}
+
+	
+	** Governorate-specific errors
+	local i = 1
+	foreach comparison in $comparisons { // Loop through each of the comparisons
+		
+		local critical = 1.7
+		local vallab : variable label tval_`comparison' // Get the labels for titling
+		
+		qui sum reject_`comparison' if type == 1 & errors == "gov_specific"
+		local power_0 = r(mean) * 100
+		local power_0: dis round(`power_0',.1)
+
+		qui sum reject_`comparison' if type == 2 & errors == "gov_specific"
+		local power_1 = r(mean) * 100
+		local power_1: dis round(`power_1',.1)
+		
+		qui sum reject_`comparison' if type == 0 & errors == "gov_specific"
+		local power_2 = r(mean) * 100
+		local power_2: dis round(`power_2',.1)
+
+		
+		* Density plots
+		tw (kdensity `comparison' if type == 1, lcolor(dknavy)) 							///
+		(kdensity `comparison' if type == 2, lcolor(dkorange))								///
+		(kdensity `comparison' if type == 0, lcolor(green)) if errors == "gov_specific",	///
+		xline(`critical' -`critical', lcolor(gray)) xtitle({&beta}) ytitle(Density) 		///
+		legend(title(Scenarios, size(small))												///
+		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
+		position(bottom) rows(1) si(vsmall)) saving(`comparison'_gov, replace) 				///
+		subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 						///
+		note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+		
+		local ++i
+	}
+	
+	
+	
+
+	set graphics on
+
+	
+	***** National level regression 1
+	grc1leg beta1_1_nat.gph beta2_1_nat.gph beta3_1_nat.gph beta4_1_nat.gph, 			///
+	legendfrom(beta1_1_nat.gph) rows(2) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (National errors), size(vsmall)) 				///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_national_1.png", replace // Save final graph
+
+
+	grc1leg beta1_1_c_nat.gph beta2_1_c_nat.gph beta3_1_c_nat.gph beta4_1_c_nat.gph,	///
+	legendfrom(beta1_1_c_nat.gph) rows(2) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (National errors), size(vsmall)) 				///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_national_controls_1.png", replace // Save final graph
+	
+
+	***** Governorate level regression 1
+	grc1leg beta1_1_gov.gph beta2_1_gov.gph beta3_1_gov.gph beta4_1_gov.gph, 			///
+	legendfrom(beta1_1_gov.gph) rows(2) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall)) 	///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_gov_1.png", replace // Save final graph
+
+
+	grc1leg beta1_1_c_gov.gph beta2_1_c_gov.gph beta3_1_c_gov.gph beta4_1_c_gov.gph,	///
+	legendfrom(beta1_1_c_gov.gph) rows(2) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall)) 	///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_gov_controls_1.png", replace // Save final graph
+	
+	
+	
+	***** National level regression 2
+	grc1leg beta2_2_nat.gph beta4_2_nat.gph, 											///
+	legendfrom(beta2_2_nat.gph) rows(1) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (National errors), size(vsmall))		///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_national_2.png", replace // Save final graph
+
+
+	grc1leg beta2_2_c_nat.gph beta4_2_c_nat.gph,										///
+	legendfrom(beta2_2_c_nat.gph) rows(1) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (National errors), size(vsmall)) 				///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_national_controls_2.png", replace // Save final graph
+	
+	
+	***** Governorate level regression 2
+	grc1leg beta2_2_gov.gph beta4_2_gov.gph, 											///
+	legendfrom(beta2_2_gov.gph) rows(1) imargin(medium) xcommon							///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall))		///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_gov_2.png", replace // Save final graph
+
+
+	grc1leg beta2_2_c_gov.gph beta4_2_c_gov.gph,										///
+	legendfrom(beta2_2_c_gov.gph) rows(1) imargin(medium) xcommon						///
+	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
+	CfW-controls=${cfw_spillover}), size(small))										///
+	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall)) 	///
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	
+	graph export "${figures}\betas\Power_s`scenario'_gov_controls_2.png", replace // Save final graph
+	
+	
+	
+	foreach comparison in beta1_1_nat beta2_1_nat beta3_1_nat beta4_1_nat beta2_2_nat	///
+	beta4_2_nat beta1_1_c_nat beta2_1_c_nat beta3_1_c_nat beta4_1_c_nat beta2_2_c_nat 	///
+	beta4_2_c_nat beta1_1_gov beta2_1_gov beta3_1_gov beta4_1_gov beta2_2_gov 			///
+	beta4_2_gov beta1_1_c_gov beta2_1_c_gov beta3_1_c_gov beta4_1_c_gov beta2_2_c_gov 	///
+	beta4_2_c_gov{ // erase temp graphs
+		
+		erase `comparison'.gph
+		
+	}
+	
+	
 	restore
 }
+
+
+
+
+
+
+
+
 ******************************************************************************
 ******************************************************************************

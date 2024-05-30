@@ -61,7 +61,7 @@ program powersim, rclass
 		global path "`path'"
 	}
 	
-	*quietly{
+	quietly{
 		
 		drop _all
 		
@@ -210,6 +210,76 @@ program powersim, rclass
 		
 		// Regressions
 		
+		***** Regression 1
+		reg y_ivds1 cfn cfw atleast1_cfw geo i.strata_id 					 		 ///
+		if (cfw == 1 | cfn == 1 | atleast1_cfw == 1 | geo == 1 | pure_control == 1), ///
+		cluster(village_id)
+		
+		local beta1_1 = r(table)[1,1]
+		local beta2_1 = r(table)[1,2]
+		local beta3_1 = r(table)[1,3]
+		local beta4_1 = r(table)[1,4]
+		
+		local reject_beta1_1 = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_beta2_1 = cond(r(table)[4,2] < `alpha', 1, 0)
+		local reject_beta3_1 = cond(r(table)[4,3] < `alpha', 1, 0)
+		local reject_beta4_1 = cond(r(table)[4,4] < `alpha', 1, 0)
+		
+		local tval_beta1_1 = r(table)[3,1]
+		local tval_beta2_1 = r(table)[3,2]
+		local tval_beta3_1 = r(table)[3,3]
+		local tval_beta4_1 = r(table)[3,4]		
+		
+		*Controls
+		reg y_ivds1 cfn cfw atleast1_cfw geo y_ivds0 i.strata_id 					 ///
+		if (cfw == 1 | cfn == 1 | atleast1_cfw == 1 | geo == 1 | pure_control == 1), ///
+		cluster(village_id)
+		
+		local beta1_1_c = r(table)[1,1]
+		local beta2_1_c = r(table)[1,2]
+		local beta3_1_c = r(table)[1,3]
+		local beta4_1_c = r(table)[1,4]
+		
+		local reject_beta1_1_c = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_beta2_1_c = cond(r(table)[4,2] < `alpha', 1, 0)
+		local reject_beta3_1_c = cond(r(table)[4,3] < `alpha', 1, 0)
+		local reject_beta4_1_c = cond(r(table)[4,4] < `alpha', 1, 0)
+		
+		local tval_beta1_1_c = r(table)[3,1]
+		local tval_beta2_1_c = r(table)[3,2]
+		local tval_beta3_1_c = r(table)[3,3]
+		local tval_beta4_1_c = r(table)[3,4]
+		
+		***** Regression 2
+		reg y_ivds1 cfw geo i.subd_id 					 		 ///
+		if (cfw == 1 | geo == 1 | pure_control == 1), 			 ///
+		cluster(village_id)
+		
+		local beta2_2 = r(table)[1,1]
+		local beta4_2 = r(table)[1,2]
+		
+		local reject_beta2_2 = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_beta4_2 = cond(r(table)[4,2] < `alpha', 1, 0)
+		
+		local tval_beta2_2 = r(table)[3,1]
+		local tval_beta4_2 = r(table)[3,2]
+		
+		
+		* Controls
+		reg y_ivds1 cfn cfw atleast1_cfw geo y_ivds0 i.strata_id 					 ///
+		if (cfw == 1 | cfn == 1 | atleast1_cfw == 1 | geo == 1 | pure_control == 1), ///
+		cluster(village_id)
+		
+		local beta2_2_c = r(table)[1,1]
+		local beta4_2_c = r(table)[1,2]
+		
+		local reject_beta2_2_c = cond(r(table)[4,1] < `alpha', 1, 0)
+		local reject_beta4_2_c = cond(r(table)[4,2] < `alpha', 1, 0)
+		
+		local tval_beta2_2_c = r(table)[3,1]
+		local tval_beta4_2_c = r(table)[3,2]
+		
+		/*
 		***** Geobundling vs CfN+CfW-only
 		reg y_ivds1 geo i.strata_id if geo == 1 | cfn_only == 1 | cfw_only == 1, cluster(village_id)
 
@@ -338,47 +408,99 @@ program powersim, rclass
 		local reject_cfw_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
 				
 		local tval_cfw_pure_c = r(table)[3,1]
-
-	*}
+	*/
+	}
 	
 	// RETURN RESULTS
-	return scalar reject_g_cfnw 	= `reject_g_cfnw'
-	return scalar reject_g_cfn 		= `reject_g_cfn'
-	return scalar reject_g_cfw 		= `reject_g_cfw'
-	return scalar reject_g_all 		= `reject_g_all'
-	return scalar reject_g_pure 	= `reject_g_pure'
-	return scalar reject_cfn_all 	= `reject_cfn_all' 
-	return scalar reject_cfw_all 	= `reject_cfw_all' 
-	return scalar reject_cfw_pure	= `reject_cfw_pure'
+	cap return scalar reject_g_cfnw 	= `reject_g_cfnw'
+	cap return scalar reject_g_cfn 		= `reject_g_cfn'
+	cap return scalar reject_g_cfw 		= `reject_g_cfw'
+	cap return scalar reject_g_all 		= `reject_g_all'
+	cap return scalar reject_g_pure 	= `reject_g_pure'
+	cap return scalar reject_cfn_all 	= `reject_cfn_all' 
+	cap return scalar reject_cfw_all 	= `reject_cfw_all' 
+	cap return scalar reject_cfw_pure	= `reject_cfw_pure'
+	
+	cap return scalar tval_g_cfnw 	= `tval_g_cfnw'
+	cap return scalar tval_g_cfn 	= `tval_g_cfn'
+	cap return scalar tval_g_cfw 	= `tval_g_cfw'
+	cap return scalar tval_g_all 	= `tval_g_all'
+	cap return scalar tval_g_pure 	= `tval_g_pure'
+	cap return scalar tval_cfn_all 	= `tval_cfn_all' 
+	cap return scalar tval_cfw_all 	= `tval_cfw_all' 
+	cap return scalar tval_cfw_pure	= `tval_cfw_pure'
 
 	
-	return scalar tval_g_cfnw 	= `tval_g_cfnw'
-	return scalar tval_g_cfn 	= `tval_g_cfn'
-	return scalar tval_g_cfw 	= `tval_g_cfw'
-	return scalar tval_g_all 	= `tval_g_all'
-	return scalar tval_g_pure 	= `tval_g_pure'
-	return scalar tval_cfn_all 	= `tval_cfn_all' 
-	return scalar tval_cfw_all 	= `tval_cfw_all' 
-	return scalar tval_cfw_pure	= `tval_cfw_pure'
+	cap return scalar reject_g_cfnw_c 	= `reject_g_cfnw_c'
+	cap return scalar reject_g_cfn_c	= `reject_g_cfn_c'
+	cap return scalar reject_g_cfw_c	= `reject_g_cfw_c'
+	cap return scalar reject_g_all_c	= `reject_g_all_c'
+	cap return scalar reject_g_pure_c	= `reject_g_pure_c'
+	cap return scalar reject_cfn_all_c	= `reject_cfn_all_c' 
+	cap return scalar reject_cfw_all_c 	= `reject_cfw_all_c' 
+	cap return scalar reject_cfw_pure_c	= `reject_cfw_pure_c'
+	 
+	cap return scalar tval_g_cfnw_c 	= `tval_g_cfnw_c'
+	cap return scalar tval_g_cfn_c		= `tval_g_cfn_c'
+	cap return scalar tval_g_cfw_c		= `tval_g_cfw_c'
+	cap return scalar tval_g_all_c		= `tval_g_all_c'
+	cap return scalar tval_g_pure_c		= `tval_g_pure_c'
+	cap return scalar tval_cfn_all_c	= `tval_cfn_all_c' 
+	cap return scalar tval_cfw_all_c 	= `tval_cfw_all_c' 
+	cap return scalar tval_cfw_pure_c	= `tval_cfw_pure_c'
 	
 	
-	return scalar reject_g_cfnw_c 	= `reject_g_cfnw_c'
-	return scalar reject_g_cfn_c	= `reject_g_cfn_c'
-	return scalar reject_g_cfw_c	= `reject_g_cfw_c'
-	return scalar reject_g_all_c	= `reject_g_all_c'
-	return scalar reject_g_pure_c	= `reject_g_pure_c'
-	return scalar reject_cfn_all_c	= `reject_cfn_all_c' 
-	return scalar reject_cfw_all_c 	= `reject_cfw_all_c' 
-	return scalar reject_cfw_pure_c	= `reject_cfw_pure_c'
+	** New ones
+	cap return scalar reject_beta1_1 = `reject_beta1_1'
+	cap return scalar reject_beta2_1 = `reject_beta2_1'
+	cap return scalar reject_beta3_1 = `reject_beta3_1'
+	cap return scalar reject_beta4_1 = `reject_beta4_1'
 	
-	return scalar tval_g_cfnw_c 	= `tval_g_cfnw_c'
-	return scalar tval_g_cfn_c		= `tval_g_cfn_c'
-	return scalar tval_g_cfw_c		= `tval_g_cfw_c'
-	return scalar tval_g_all_c		= `tval_g_all_c'
-	return scalar tval_g_pure_c		= `tval_g_pure_c'
-	return scalar tval_cfn_all_c	= `tval_cfn_all_c' 
-	return scalar tval_cfw_all_c 	= `tval_cfw_all_c' 
-	return scalar tval_cfw_pure_c	= `tval_cfw_pure_c'
+	cap return scalar tval_beta1_1 = `tval_beta1_1'
+	cap return scalar tval_beta2_1 = `tval_beta2_1'
+	cap return scalar tval_beta3_1 = `tval_beta3_1'
+	cap return scalar tval_beta4_1 = `tval_beta4_1'
+	
+	cap return scalar reject_beta1_1_c = `reject_beta1_1_c'
+	cap return scalar reject_beta2_1_c = `reject_beta2_1_c'
+	cap return scalar reject_beta3_1_c = `reject_beta3_1_c'
+	cap return scalar reject_beta4_1_c = `reject_beta4_1_c'
+	
+	cap return scalar tval_beta1_1_c = `tval_beta1_1_c'
+	cap return scalar tval_beta2_1_c = `tval_beta2_1_c'
+	cap return scalar tval_beta3_1_c = `tval_beta3_1_c'
+	cap return scalar tval_beta4_1_c = `tval_beta4_1_c'
+	
+	
+	cap return scalar reject_beta2_2 = `reject_beta1_2'
+	cap return scalar reject_beta4_2 = `reject_beta2_2'
+	
+	cap return scalar tval_beta2_2 = `tval_beta1_2'
+	cap return scalar tval_beta4_2 = `tval_beta2_2'
+	
+	cap return scalar reject_beta2_2_c = `reject_beta1_2_c'
+	cap return scalar reject_beta4_2_c = `reject_beta2_2_c'
+	
+	cap return scalar tval_beta2_2_c = `tval_beta1_2_c'
+	cap return scalar tval_beta4_2_c = `tval_beta2_2_c'
+	
+	
+	cap return scalar beta1_1 = `beta1_1'
+	cap return scalar beta2_1 = `beta2_1'
+	cap return scalar beta3_1 = `beta3_1'
+	cap return scalar beta4_1 = `beta4_1'
+	
+	cap return scalar beta1_1_c = `beta1_1_c'
+	cap return scalar beta2_1_c = `beta2_1_c'
+	cap return scalar beta3_1_c = `beta3_1_c'
+	cap return scalar beta4_1_c = `beta4_1_c'
+	
+	cap return scalar beta2_2 = `beta1_2'
+	cap return scalar beta4_2 = `beta2_2'
+	
+	cap return scalar beta2_2_c = `beta1_2_c'
+	cap return scalar beta4_2_c = `beta2_2_c'
+
 	
 	
 end
