@@ -19,7 +19,7 @@
 * Global directory, parameters and assumptions:
 ****************************************************************************
 global main "C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
-global data "${main}\01 Data"
+global data "${main}\01 Data\comparisons"
 global figures "${main}\04 Figures"
 
 
@@ -94,7 +94,7 @@ foreach scenario in 2 6{
 	else if  `scenario' == 6 {
 		global cfn_effect 0.23
 		global cfw_effect 0.1
-		global geo_effect 0.4
+		global geo_effect 0.5
 		global cfw_spillover 0.03
 	}
 
