@@ -176,7 +176,7 @@ foreach error in national gov_specific{
 		else if  `scenario' == 6 {
 			global cfn_effect 0.23
 			global cfw_effect 0.1
-			global geo_effect 0.4
+			global geo_effect 0.5
 			global cfw_spillover 0.03
 		}
 
