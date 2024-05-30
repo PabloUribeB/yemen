@@ -95,7 +95,7 @@ mixed FC1_d || HH7: || stratum: || HH1: , stddev
 
 matrix b = e(b)
 
-scalar mu			= exp(b[1, 2])
+scalar mu			= exp(b[1, 1])
 scalar sd_strata 	= exp(b[1, 2])
 scalar sd_subd 		= exp(b[1, 3])
 
