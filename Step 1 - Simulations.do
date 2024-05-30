@@ -37,38 +37,45 @@ global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen"
 
 global reps 1000 // Enter desired number of Monte-Carlo simulations
 
-global stats reject_g_cfnw = r(reject_g_cfnw) 			///
-			reject_g_cfn = r(reject_g_cfn) 				///
-			reject_g_cfw = r(reject_g_cfw) 				///
-			reject_g_all = r(reject_g_all)				///
-			reject_g_pure = r(reject_g_pure) 			///
-			reject_cfn_all = r(reject_cfn_all) 			///
-			reject_cfw_all = r(reject_cfw_all)			///
-			reject_cfw_pure = r(reject_cfw_pure)		///
-			reject_g_cfnw_c = r(reject_g_cfnw_c) 		///
-			reject_g_cfn_c = r(reject_g_cfn_c) 			///
-			reject_g_cfw_c = r(reject_g_cfw_c) 			///
-			reject_g_all_c = r(reject_g_all_c)			///
-			reject_g_pure_c = r(reject_g_pure_c) 		///
-			reject_cfn_all_c = r(reject_cfn_all_c) 		///
-			reject_cfw_all_c = r(reject_cfw_all_c)		///
-			reject_cfw_pure_c = r(reject_cfw_pure_c)	///
-			tval_g_cfnw = r(tval_g_cfnw) 				///
-			tval_g_cfn = r(tval_g_cfn) 					///
-			tval_g_cfw = r(tval_g_cfw) 					///
-			tval_g_all = r(tval_g_all)					///
-			tval_g_pure = r(tval_g_pure) 				///
-			tval_cfn_all = r(tval_cfn_all) 				///
-			tval_cfw_all = r(tval_cfw_all)				///
-			tval_cfw_pure = r(tval_cfw_pure)			///
-			tval_g_cfnw_c = r(tval_g_cfnw_c) 			///
-			tval_g_cfn_c = r(tval_g_cfn_c) 				///
-			tval_g_cfw_c = r(tval_g_cfw_c) 				///
-			tval_g_all_c = r(tval_g_all_c)				///
-			tval_g_pure_c = r(tval_g_pure_c) 			///
-			tval_cfn_all_c = r(tval_cfn_all_c) 			///
-			tval_cfw_all_c = r(tval_cfw_all_c)			///
-			tval_cfw_pure_c = r(tval_cfw_pure_c)
+global stats reject_beta1_1 	= r(reject_beta1_1)		///
+			 reject_beta2_1 	= r(reject_beta2_1)		///
+			 reject_beta3_1 	= r(reject_beta3_1)		///
+			 reject_beta4_1 	= r(reject_beta4_1)		///
+			 tval_beta1_1 		= r(tval_beta1_1)		///
+			 tval_beta2_1 		= r(tval_beta2_1)		///
+			 tval_beta3_1 		= r(tval_beta3_1)		///
+			 tval_beta4_1 		= r(tval_beta4_1)		///
+			 reject_beta1_1_c	= r(reject_beta1_1_c)	///
+			 reject_beta2_1_c	= r(reject_beta2_1_c)	///
+			 reject_beta3_1_c	= r(reject_beta3_1_c)	///
+			 reject_beta4_1_c	= r(reject_beta4_1_c)	///
+			 tval_beta1_1_c 	= r(tval_beta1_1_c)		///
+			 tval_beta2_1_c 	= r(tval_beta2_1_c)		///
+			 tval_beta3_1_c 	= r(tval_beta3_1_c)		///
+			 tval_beta4_1_c 	= r(tval_beta4_1_c)		///
+			 reject_beta2_2 	= r(reject_beta2_2)		///
+			 reject_beta4_2 	= r(reject_beta4_2)		///
+			 tval_beta2_2 		= r(tval_beta2_2)		///
+			 tval_beta4_2 		= r(tval_beta4_2)		///
+			 reject_beta2_2_c	= r(reject_beta2_2_c)	///
+			 reject_beta4_2_c	= r(reject_beta4_2_c)	///
+			 tval_beta2_2_c 	= r(tval_beta2_2_c)		///
+			 tval_beta4_2_c 	= r(tval_beta4_2_c)		///
+			 beta1_1 			= r(beta1_1)			///
+			 beta2_1 			= r(beta2_1)			///
+			 beta3_1 			= r(beta3_1)			///
+			 beta4_1 			= r(beta4_1)			///
+			 beta1_1_c 			= r(beta1_1_c)			///
+			 beta2_1_c 			= r(beta2_1_c)			///
+			 beta3_1_c 			= r(beta3_1_c)			///
+			 beta4_1_c 			= r(beta4_1_c)			///
+			 beta2_2 			= r(beta2_2)			///
+			 beta4_2 			= r(beta4_2)			///
+			 beta2_2_c 			= r(beta2_2_c)			///
+			 beta4_2_c 			= r(beta4_2_c)
+			
+			
+
 			
 * Call the program
 do "${do_files}\powersim.do"
@@ -176,7 +183,7 @@ foreach error in national gov_specific{
 		else if  `scenario' == 6 {
 			global cfn_effect 0.23
 			global cfw_effect 0.1
-			global geo_effect 0.4
+			global geo_effect 0.5
 			global cfw_spillover 0.03
 		}
 

@@ -41,8 +41,9 @@ set scheme white_tableau
 ****************************************************************************
 use "${data}\simulation_results.dta", clear
 			
-labvars beta1_1 beta2_1 beta3_1 beta4_1 beta2_2 beta4_2 beta1_1_c 				///
-		beta2_1_c beta3_1_c beta4_1_c beta2_2_c beta4_2_c						///
+labvars tval_beta1_1 tval_beta2_1 tval_beta3_1 tval_beta4_1 tval_beta2_2 		///
+		tval_beta4_2 tval_beta1_1_c tval_beta2_1_c tval_beta3_1_c 				///
+		tval_beta4_1_c tval_beta2_2_c tval_beta4_2_c							///
 		"1 (CfN subdistrict)" "2 (CfW village)" 								///
 		"3 (At least 1 CfW subd.)" "4 Geobundling" "2 (CfW village)" 			///
 		"4 Geobundling" "1 (CfN subdistrict) with baseline"						///
@@ -86,7 +87,7 @@ foreach scenario in 2 6{
 	else if  `scenario' == 6 {
 		global cfn_effect 0.23
 		global cfw_effect 0.1
-		global geo_effect 0.4
+		global geo_effect 0.5
 		global cfw_spillover 0.03
 	}
 
@@ -180,7 +181,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\Power_s`scenario'_national_1.png", replace // Save final graph
 
@@ -190,7 +191,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\Power_s`scenario'_national_controls_1.png", replace // Save final graph
 	
@@ -201,7 +202,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall)) 		///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\Power_s`scenario'_gov_1.png", replace // Save final graph
 
@@ -211,7 +212,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall)) 		///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny))  
 	
 	graph export "${figures}\Power_s`scenario'_gov_controls_1.png", replace // Save final graph
 	
@@ -223,7 +224,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (National errors), size(vsmall))					///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\Power_s`scenario'_national_2.png", replace // Save final graph
 
@@ -233,7 +234,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\Power_s`scenario'_national_controls_2.png", replace // Save final graph
 	
@@ -244,7 +245,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall))		///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny))  
 	
 	graph export "${figures}\Power_s`scenario'_gov_2.png", replace // Save final graph
 
@@ -254,7 +255,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall)) 				///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\Power_s`scenario'_gov_controls_2.png", replace // Save final graph
 	
@@ -302,8 +303,7 @@ foreach scenario in 2 6{
 		tw (kdensity `comparison' if type == 1, lcolor(dknavy)) 						///
 		(kdensity `comparison' if type == 2, lcolor(dkorange))							///
 		(kdensity `comparison' if type == 0, lcolor(green)) if errors == "national",	///
-		xline(`critical' -`critical', lcolor(gray)) xtitle({&beta}) ytitle(Density) 	///
-		legend(title(Scenarios, size(small))											///
+		xtitle({&beta}) ytitle(Density) legend(title(Scenarios, size(small))			///
 		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")					///
 		position(bottom) rows(1) si(vsmall)) saving(`comparison'_nat, replace) 			///
 		subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 					///
@@ -337,8 +337,7 @@ foreach scenario in 2 6{
 		tw (kdensity `comparison' if type == 1, lcolor(dknavy)) 							///
 		(kdensity `comparison' if type == 2, lcolor(dkorange))								///
 		(kdensity `comparison' if type == 0, lcolor(green)) if errors == "gov_specific",	///
-		xline(`critical' -`critical', lcolor(gray)) xtitle({&beta}) ytitle(Density) 		///
-		legend(title(Scenarios, size(small))												///
+		xtitle({&beta}) ytitle(Density) legend(title(Scenarios, size(small))				///
 		order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
 		position(bottom) rows(1) si(vsmall)) saving(`comparison'_gov, replace) 				///
 		subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 						///
@@ -348,18 +347,18 @@ foreach scenario in 2 6{
 	}
 	
 	
-	
+
 
 	set graphics on
 
-	
+
 	***** National level regression 1
 	grc1leg beta1_1_nat.gph beta2_1_nat.gph beta3_1_nat.gph beta4_1_nat.gph, 			///
 	legendfrom(beta1_1_nat.gph) rows(2) imargin(medium) xcommon							///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (National errors), size(vsmall)) 				///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\betas\Power_s`scenario'_national_1.png", replace // Save final graph
 
@@ -369,7 +368,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (National errors), size(vsmall)) 				///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny))  
 	
 	graph export "${figures}\betas\Power_s`scenario'_national_controls_1.png", replace // Save final graph
 	
@@ -380,7 +379,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall)) 	///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\betas\Power_s`scenario'_gov_1.png", replace // Save final graph
 
@@ -390,7 +389,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall)) 	///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\betas\Power_s`scenario'_gov_controls_1.png", replace // Save final graph
 	
@@ -402,7 +401,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (National errors), size(vsmall))		///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny))  
 	
 	graph export "${figures}\betas\Power_s`scenario'_national_2.png", replace // Save final graph
 
@@ -412,7 +411,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (National errors), size(vsmall)) 				///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\betas\Power_s`scenario'_national_controls_2.png", replace // Save final graph
 	
@@ -423,7 +422,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall))		///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\betas\Power_s`scenario'_gov_2.png", replace // Save final graph
 
@@ -433,7 +432,7 @@ foreach scenario in 2 6{
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
 	subtitle(Distribution of {&beta}'s (Governorate-specific errors), size(vsmall)) 	///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000.", s(tiny)) 
 	
 	graph export "${figures}\betas\Power_s`scenario'_gov_controls_2.png", replace // Save final graph
 	
