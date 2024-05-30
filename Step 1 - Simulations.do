@@ -254,7 +254,7 @@ foreach error in national gov_specific{
 		
 		compress
 		
-		save "${data}\simulation_results_s`scenario'_`error'.dta", replace // Save monte-carlo simulation results
+		save "${data}\comparisons\simulation_results_s`scenario'_`error'.dta", replace // Save monte-carlo simulation results
 
 		/* OLD
 		* Random pure controls
@@ -273,9 +273,9 @@ foreach error in national gov_specific{
 	}
 }
 
-use "${data}\simulation_results_s2_national.dta", clear
+use "${data}\comparisons\simulation_results_s2_national.dta", clear
 
-append using "${data}\simulation_results_s2_gov_specific.dta" "${data}\simulation_results_s6_national.dta" "${data}\simulation_results_s6_gov_specific.dta", gen(scenario)
+append using "${data}\comparisons\simulation_results_s2_gov_specific.dta" "${data}\comparisons\simulation_results_s6_national.dta" "${data}\comparisons\simulation_results_s6_gov_specific.dta", gen(scenario)
 
 label val scenario
 
@@ -284,7 +284,7 @@ replace scenario = 2 if inlist(scenario, 0, 1)
 
 compress
 
-save "${data}\simulation_results.dta", replace
+save "${data}\comparisons\simulation_results.dta", replace
 
 /*
 use "${data}\simulation_results_s1.dta", clear
