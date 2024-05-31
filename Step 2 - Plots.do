@@ -52,7 +52,7 @@ labvars tval_beta1_1 tval_beta2_1 tval_beta3_1 tval_beta4_1 tval_beta2_2 		///
 		"2 (CfW village) with baseline" "4 Geobundling with baseline"
 
 
-foreach scenario in 2 6{
+foreach scenario in 2 3 6{
 
 	if  `scenario' == 1 {
 		global cfn_effect 0.2
@@ -67,8 +67,8 @@ foreach scenario in 2 6{
 		global cfw_spillover 0
 	}
 	else if  `scenario' == 3 {
-		global cfn_effect 0.4
-		global cfw_effect 0.2
+		global cfn_effect 0.23
+		global cfw_effect 0.1
 		global geo_effect 0.6
 		global cfw_spillover 0
 	}
