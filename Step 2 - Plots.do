@@ -59,7 +59,7 @@ labvars tval_g_cfnw tval_g_cfn tval_g_cfw tval_g_all tval_g_pure 		///
 		"CfW-only vs pure controls (with covariate)"
 
 
-foreach scenario in 2 6{
+foreach scenario in 2 3 6{
 
 	if  `scenario' == 1 {
 		global cfn_effect 0.2
@@ -74,8 +74,8 @@ foreach scenario in 2 6{
 		global cfw_spillover 0
 	}
 	else if  `scenario' == 3 {
-		global cfn_effect 0.4
-		global cfw_effect 0.2
+		global cfn_effect 0.23
+		global cfw_effect 0.1
 		global geo_effect 0.6
 		global cfw_spillover 0
 	}
