@@ -287,8 +287,8 @@ append using "${data}\simulation_results_s2_gov_specific.dta" "${data}\simulatio
 label val scenario
 
 replace scenario = 6 if inlist(scenario, 4, 5)
-replace scenario = 2 if inlist(scenario, 0, 1)
 replace scenario = 3 if inlist(scenario, 2, 3)
+replace scenario = 2 if inlist(scenario, 0, 1)
 
 compress
 
