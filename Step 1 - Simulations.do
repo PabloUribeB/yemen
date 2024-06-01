@@ -141,7 +141,7 @@ scalar sd = r(sd)
 *forval scenario = 1/6{
 foreach error in national gov_specific{
 	
-	foreach scenario in 2 6{
+	foreach scenario in 2 3 6{
 
 		if  `scenario' == 1 {
 			global cfn_effect 0.2
@@ -156,8 +156,8 @@ foreach error in national gov_specific{
 			global cfw_spillover 0
 		}
 		else if  `scenario' == 3 {
-			global cfn_effect 0.4
-			global cfw_effect 0.2
+			global cfn_effect 0.23
+			global cfw_effect 0.1
 			global geo_effect 0.6
 			global cfw_spillover 0
 		}
@@ -275,11 +275,12 @@ foreach error in national gov_specific{
 
 use "${data}\comparisons\simulation_results_s2_national.dta", clear
 
-append using "${data}\comparisons\simulation_results_s2_gov_specific.dta" "${data}\comparisons\simulation_results_s6_national.dta" "${data}\comparisons\simulation_results_s6_gov_specific.dta", gen(scenario)
+append using "${data}\comparisons\simulation_results_s2_gov_specific.dta" "${data}\comparisons\simulation_results_s3_national.dta" "${data}\comparisons\simulation_results_s3_gov_specific.dta" "${data}\comparisons\simulation_results_s6_national.dta" "${data}\comparisons\simulation_results_s6_gov_specific.dta", gen(scenario)
 
 label val scenario
 
-replace scenario = 6 if inlist(scenario, 2, 3)
+replace scenario = 6 if inlist(scenario, 4, 5)
+replace scenario = 3 if inlist(scenario, 2, 3)
 replace scenario = 2 if inlist(scenario, 0, 1)
 
 compress
