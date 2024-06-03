@@ -23,6 +23,7 @@ program powersim, rclass
 			sd(real)				///
 			path(string)			///
 			errors(string)			///
+			question(string)		///
           [ alpha(real 0.05) 		///
 			geo_effect(real 0.3) 	///
 			cfn_effect(real 0.2)	///
@@ -49,7 +50,13 @@ program powersim, rclass
 	
 	if mi("`errors'") local method "national"
 	else if ("`errors'" != "gov_specific" & "`errors'" != "national") {
-        display as err "option method() invalid. Should be national or gov_specific"
+        display as err "option errors() invalid. Should be national or gov_specific"
+        exit 198
+    }
+	
+	if mi("`question'") local method "FC1_d"
+	else if !inlist("`question'", "FC1_d", "FC5_d", "FC8_d") {
+        display as err "option question() invalid. Should be FC1_d, FC5_d or FC8_d"
         exit 198
     }
 	
@@ -125,16 +132,16 @@ program powersim, rclass
 			
 			foreach id in `strata'{
 				
-				`gen' epsilon_v0  = rnormal(0, `=sd_village_`id'') if strata_id == `id' // Village-level random component baseline
+				`gen' epsilon_v0  = rnormal(0, `=sd_village_`id'_`question'') if strata_id == `id' // Village-level random component baseline
 				
-				`gen' epsilon_v1  = rnormal(0, `=sd_village_`id'') if strata_id == `id' // Village-level random component follow-up
+				`gen' epsilon_v1  = rnormal(0, `=sd_village_`id'_`question'') if strata_id == `id' // Village-level random component follow-up
 				
 				local gen replace
 			}
 		}
 		else{ // National-level errors
-			gen epsilon_v0  = rnormal(0, `=sd_village') // Village-level random component baseline
-			gen epsilon_v1  = rnormal(0, `=sd_village') // Village-level random component follow-up
+			gen epsilon_v0  = rnormal(0, `=sd_village_`question'') // Village-level random component baseline
+			gen epsilon_v1  = rnormal(0, `=sd_village_`question'') // Village-level random component follow-up
 		}
 		
 		
@@ -173,35 +180,35 @@ program powersim, rclass
 			local gen gen
 			foreach id in `strata'{
 				
-				`gen' epsilon_i0 = rnormal(0, `=sd_ind_`id'') if strata_id == `id' // Generate observation-level random component baseline
+				`gen' epsilon_i0 = rnormal(0, `=sd_ind_`id'_`question'') if strata_id == `id' // Generate observation-level random component baseline
 				
-				`gen' epsilon_i1 = rnormal(0, `=sd_ind_`id'') if strata_id == `id' // Generate observation-level random component follow-up
+				`gen' epsilon_i1 = rnormal(0, `=sd_ind_`id'_`question'') if strata_id == `id' // Generate observation-level random component follow-up
 				
 				local gen replace
 				
 			}
 			* Generate the outcome variable following specified effects
 			
-			gen y_ivds0 = epsilon_s + epsilon_d0 + epsilon_v0 + epsilon_i0 // Baseline
+			gen y_ivds0 = epsilon_s_`question' + epsilon_d0_`question' + epsilon_v0 + epsilon_i0 // Baseline
 			
 			gen y_ivds1 = 0.5*y_ivds0 + (cw_effect * cfw_only) + 				///
 				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
-				(g_effect * geo) + epsilon_s + epsilon_d1 + epsilon_v1 + epsilon_i1 // Follow-up
+				(g_effect * geo) + epsilon_s_`question' + epsilon_d1_`question' + epsilon_v1 + epsilon_i1 // Follow-up
 		}
 		else{ // National-level errors
 			
-			gen epsilon_i0 = rnormal(0, `=sd_ind') // Generate observation-level random component baseline
+			gen epsilon_i0 = rnormal(0, `=sd_ind_`question'') // Generate observation-level random component baseline
 				
-			gen epsilon_i1 = rnormal(0, `=sd_ind') // Generate observation-level random component follow-up
+			gen epsilon_i1 = rnormal(0, `=sd_ind_`question'') // Generate observation-level random component follow-up
 			
 			
 			* Generate the outcome variable following specified effects
 			
-			gen y_ivds0 = mu + epsilon_s0 + epsilon_d0 + epsilon_v0 + epsilon_i0 // Baseline
+			gen y_ivds0 = mu_`question' + epsilon_s0_`question' + epsilon_d0_`question' + epsilon_v0 + epsilon_i0 // Baseline
 			
-			gen y_ivds1 = mu + 0.5*y_ivds0 + (cw_effect * cfw_only) + 			///
+			gen y_ivds1 = mu_`question' + 0.5*y_ivds0 + (cw_effect * cfw_only) + 			///
 				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
-				(g_effect * geo) + epsilon_s1 + epsilon_d1 + epsilon_v1 + epsilon_i1 // Follow-up
+				(g_effect * geo) + epsilon_s1_`question' + epsilon_d1_`question' + epsilon_v1 + epsilon_i1 // Follow-up
 			
 		}
 		
@@ -276,178 +283,10 @@ program powersim, rclass
 		local tval_beta2_2_c = r(table)[3,1]
 		local tval_beta4_2_c = r(table)[3,2]
 		
-		/*
-		***** Geobundling vs CfN+CfW-only
-		reg y_ivds1 geo i.strata_id if geo == 1 | cfn_only == 1 | cfw_only == 1, cluster(village_id)
-
-		local reject_g_cfnw = cond(r(table)[4,1] < `alpha', 1, 0)
-		
-		local tval_g_cfnw = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 geo y_ivds0 i.strata_id if geo == 1 | cfn_only == 1 | cfw_only == 1, cluster(village_id)
-
-		local reject_g_cfnw_c = cond(r(table)[4,1] < `alpha', 1, 0)
-		
-		local tval_g_cfnw_c = r(table)[3,1]
-		
-		
-		
-		***** Geobundling vs CfN
-		reg y_ivds1 geo i.en_subd_id if geo == 1 | cfn_only == 1, cluster(village_id)
-
-		local reject_g_cfn = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_cfn = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 geo y_ivds0 i.en_subd_id if geo == 1 | cfn_only == 1, cluster(village_id)
-
-		local reject_g_cfn_c = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_cfn_c = r(table)[3,1]
-
-
-		
-		***** Geobundling vs CfW only
-		reg y_ivds1 geo i.strata_id if (geo == 1 | cfw_only == 1), cluster(village_id)
-
-		local reject_g_cfw = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_cfw = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 geo y_ivds0 i.strata_id if (geo == 1 | cfw_only == 1), cluster(village_id)
-
-		local reject_g_cfw_c = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_cfw_c = r(table)[3,1]
-
-
-		
-		***** Geobundling vs all controls
-		reg y_ivds1 geo i.strata_id if (geo == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_g_all = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_all = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 geo y_ivds0 i.strata_id if (geo == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_g_all_c = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_all_c = r(table)[3,1]
-		
-		
-		
-		***** Geobundling vs pure controls
-		reg y_ivds1 geo i.strata_id if (geo == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_g_pure = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_pure = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 geo y_ivds0 i.strata_id if (geo == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_g_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_g_pure_c = r(table)[3,1]
-		
-			
-		
-		
-		***** CfN vs all controls
-		reg y_ivds1 cfn_only i.strata_id if (cfn_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfn_all = cond(r(table)[4,1] < `alpha', 1, 0)
-
-		local tval_cfn_all = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 cfn_only y_ivds0 i.strata_id if (cfn_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfn_all_c = cond(r(table)[4,1] < `alpha', 1, 0)
-
-		local tval_cfn_all_c = r(table)[3,1]
-		
-			
-			
-		***** CfW only vs all controls
-		reg y_ivds1 cfw_only i.en_subd_id if (cfw_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfw_all = cond(r(table)[4,1] < `alpha', 1, 0)
-
-		local tval_cfw_all = r(table)[3,1]
-		
-		
-		* Controls
-		reg y_ivds1 cfw_only y_ivds0 i.en_subd_id if (cfw_only == 1 | cfw_control == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfw_all_c = cond(r(table)[4,1] < `alpha', 1, 0)
-
-		local tval_cfw_all_c = r(table)[3,1]
-		
-		
-		
-		
-		***** CfW-only vs pure control
-		reg y_ivds1 cfw_only i.strata_id if (cfw_only == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfw_pure = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_cfw_pure = r(table)[3,1]
-		
-		* Controls
-		reg y_ivds1 cfw_only y_ivds0 i.strata_id if (cfw_only == 1 | pure_control == 1), cluster(village_id)
-
-		local reject_cfw_pure_c = cond(r(table)[4,1] < `alpha', 1, 0)
-				
-		local tval_cfw_pure_c = r(table)[3,1]
-	*/
 	}
 	
 	// RETURN RESULTS
-	/*cap return scalar reject_g_cfnw 	= `reject_g_cfnw'
-	cap return scalar reject_g_cfn 		= `reject_g_cfn'
-	cap return scalar reject_g_cfw 		= `reject_g_cfw'
-	cap return scalar reject_g_all 		= `reject_g_all'
-	cap return scalar reject_g_pure 	= `reject_g_pure'
-	cap return scalar reject_cfn_all 	= `reject_cfn_all' 
-	cap return scalar reject_cfw_all 	= `reject_cfw_all' 
-	cap return scalar reject_cfw_pure	= `reject_cfw_pure'
-	
-	cap return scalar tval_g_cfnw 	= `tval_g_cfnw'
-	cap return scalar tval_g_cfn 	= `tval_g_cfn'
-	cap return scalar tval_g_cfw 	= `tval_g_cfw'
-	cap return scalar tval_g_all 	= `tval_g_all'
-	cap return scalar tval_g_pure 	= `tval_g_pure'
-	cap return scalar tval_cfn_all 	= `tval_cfn_all' 
-	cap return scalar tval_cfw_all 	= `tval_cfw_all' 
-	cap return scalar tval_cfw_pure	= `tval_cfw_pure'
 
-	
-	cap return scalar reject_g_cfnw_c 	= `reject_g_cfnw_c'
-	cap return scalar reject_g_cfn_c	= `reject_g_cfn_c'
-	cap return scalar reject_g_cfw_c	= `reject_g_cfw_c'
-	cap return scalar reject_g_all_c	= `reject_g_all_c'
-	cap return scalar reject_g_pure_c	= `reject_g_pure_c'
-	cap return scalar reject_cfn_all_c	= `reject_cfn_all_c' 
-	cap return scalar reject_cfw_all_c 	= `reject_cfw_all_c' 
-	cap return scalar reject_cfw_pure_c	= `reject_cfw_pure_c'
-	 
-	cap return scalar tval_g_cfnw_c 	= `tval_g_cfnw_c'
-	cap return scalar tval_g_cfn_c		= `tval_g_cfn_c'
-	cap return scalar tval_g_cfw_c		= `tval_g_cfw_c'
-	cap return scalar tval_g_all_c		= `tval_g_all_c'
-	cap return scalar tval_g_pure_c		= `tval_g_pure_c'
-	cap return scalar tval_cfn_all_c	= `tval_cfn_all_c' 
-	cap return scalar tval_cfw_all_c 	= `tval_cfw_all_c' 
-	cap return scalar tval_cfw_pure_c	= `tval_cfw_pure_c'
-	*/
-	
-	** New ones
 	return scalar reject_beta1_1 	= `reject_beta1_1'
 	return scalar reject_beta2_1 	= `reject_beta2_1'
 	return scalar reject_beta3_1 	= `reject_beta3_1'
@@ -498,7 +337,5 @@ program powersim, rclass
 	return scalar beta2_2_c 		= `beta2_2_c'
 	return scalar beta4_2_c 		= `beta4_2_c'
 
-	
-	
 end
 
