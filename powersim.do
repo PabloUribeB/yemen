@@ -42,7 +42,7 @@ program powersim, rclass
         exit 198
     }
 	
-	if mi("`method'") local method "default"
+	if mi("`method'") local question "default"
 	else if ("`method'" != "default" & "`method'" != "alt") {
         display as err "option method() invalid. Should be default or alt"
         exit 198
