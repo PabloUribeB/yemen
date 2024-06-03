@@ -48,15 +48,11 @@ labvars tval_g_cfnw tval_g_cfn tval_g_cfw tval_g_all tval_g_pure 		///
 		"Geobundling vs CfN-only" "Geobundling vs CfW-only"		 		///
 		"Geobundling vs all controls" "Geobundling vs pure controls" 	///
 		"CfN-only vs all controls" "CfW-only vs all controls" 			///
-		"CfW-only vs pure controls"										///
-		"Geobundling vs CfN+CfW-only (with covariate)"					///
-		"Geobundling vs CfN-only (with covariate)" 						///
-		"Geobundling vs CfW-only (with covariate)"		 				///
-		"Geobundling vs all controls (with covariate)" 					///
-		"Geobundling vs pure controls (with covariate)" 				///
-		"CfN-only vs all controls (with covariate)" 					///
-		"CfW-only vs all controls (with covariate)" 					///
-		"CfW-only vs pure controls (with covariate)"
+		"CfW-only vs pure controls"	"Geobundling vs CfN+CfW-only"		///
+		"Geobundling vs CfN-only" "Geobundling vs CfW-only"				///
+		"Geobundling vs all controls" "Geobundling vs pure controls" 	///
+		"CfN-only vs all controls" "CfW-only vs all controls" 			///
+		"CfW-only vs pure controls"
 
 
 foreach scenario in 2 3 6{
@@ -178,56 +174,56 @@ foreach scenario in 2 3 6{
 
 	grc1leg g_cfnw_nat.gph g_cfn_nat.gph g_cfw_nat.gph g_all_nat.gph g_pure_nat.gph 	///
 	cfn_all_nat.gph cfw_all_nat.gph cfw_pure_nat.gph, 									///
-	legendfrom(g_cfnw_nat.gph) rows(2) imargin(medium) xcommon							///
+	legendfrom(g_cfnw_nat.gph) rows(4) imargin(medium) xcommon							///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
-	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	subtitle(Distribution of t-stats, size(vsmall)) 					///
 	saving(s`scenario'_nat, replace)													///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
 
-	graph display, xsize(9)
+	graph display, ysize(9)
 	
 	graph export "${figures}\Power_s`scenario'_national.png", replace // Save final graph
 
 
 	grc1leg g_cfnw_c_nat.gph g_cfn_c_nat.gph g_cfw_c_nat.gph g_all_c_nat.gph 			///
 	g_pure_c_nat.gph cfn_all_c_nat.gph cfw_all_c_nat.gph cfw_pure_c_nat.gph,			///
-	legendfrom(g_cfnw_c_nat.gph) rows(2) imargin(medium) xcommon							///
+	legendfrom(g_cfnw_c_nat.gph) rows(4) imargin(medium) xcommon							///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
-	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	subtitle(Distribution of t-stats, size(vsmall)) 					///
 	saving(s`scenario'_nat_c, replace)													///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
 
-	graph display, xsize(9)
+	graph display, ysize(9)
 	
 	graph export "${figures}\Power_s`scenario'_national_controls.png", replace // Save final graph
 	
 
 	grc1leg g_cfnw_gov.gph g_cfn_gov.gph g_cfw_gov.gph g_all_gov.gph g_pure_gov.gph 	///
 	cfn_all_gov.gph cfw_all_gov.gph cfw_pure_gov.gph, 									///
-	legendfrom(g_cfnw_gov.gph) rows(2) imargin(medium) xcommon							///
+	legendfrom(g_cfnw_gov.gph) rows(4) imargin(medium) xcommon							///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
-	subtitle(Distribution of t-stats (Governorate-specific errors), size(vsmall))		///
+	subtitle(Distribution of t-stats, size(vsmall))		///
 	saving(s`scenario'_gov, replace)													///
-	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
+	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
 
-	graph display, xsize(9)
+	graph display, ysize(9)
 	
 	graph export "${figures}\Power_s`scenario'_gov.png", replace // Save final graph
 
 
 	grc1leg g_cfnw_c_gov.gph g_cfn_c_gov.gph g_cfw_c_gov.gph g_all_c_gov.gph 			///
 	g_pure_c_gov.gph cfn_all_c_gov.gph cfw_all_c_gov.gph cfw_pure_c_gov.gph,			///
-	legendfrom(g_cfnw_c_gov.gph) rows(2) imargin(medium) xcommon						///
+	legendfrom(g_cfnw_c_gov.gph) rows(4) imargin(medium) xcommon						///
 	title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 	CfW-controls=${cfw_spillover}), size(small))										///
-	subtitle(Distribution of t-stats (National errors), size(vsmall)) 					///
+	subtitle(Distribution of t-stats, size(vsmall)) 					///
 	saving(s`scenario'_gov_c, replace)													///
 	note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000.", s(tiny)) 
 
-	graph display, xsize(9)
+	graph display, ysize(9)
 	
 	graph export "${figures}\Power_s`scenario'_gov_controls.png", replace // Save final graph
 	
