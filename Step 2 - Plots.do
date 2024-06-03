@@ -58,14 +58,14 @@ labvars tval_beta1_1 tval_beta2_1 tval_beta3_1 tval_beta4_1 tval_beta2_2 	///
 		"3: At least 1 CfW subd." "4: Geobundling" "2: CfW village" 		///
 		"4: Geobundling"
 
-local i = 1
+local counter = 1
 local detail "Not eating enough due to lack of money."
 foreach quest in $questions{
 	
-	if `i' == 2{
+	if `counter' == 2{
 		local detail "Ate less food than thought."
 	}
-	else if `i' == 3{
+	else if `counter' == 3{
 		local detail "Went without eating for a whole day."
 	}
 	
@@ -469,7 +469,7 @@ foreach quest in $questions{
 		restore
 	}
 	
-	local ++i
+	local ++counter
 }
 
 
