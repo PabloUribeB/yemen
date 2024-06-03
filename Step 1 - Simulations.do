@@ -235,7 +235,7 @@ foreach quest in $questions{
 	}
 }
 
-use "${data}\comparisons\simulation_results_s2_national.dta", clear
+use "${data}\comparisons\simulation_results_s2_national_FC1_d.dta", clear
 
 append using "${data}\comparisons\simulation_results_s2_gov_specific_FC1_d.dta" 	///
 			"${data}\comparisons\simulation_results_s3_national_FC1_d.dta" 			///
