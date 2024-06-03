@@ -23,6 +23,7 @@ program powersim, rclass
 			sd(real)				///
 			path(string)			///
 			errors(string)			///
+			question(string)		///
           [ alpha(real 0.05) 		///
 			geo_effect(real 0.3) 	///
 			cfn_effect(real 0.2)	///
@@ -50,6 +51,12 @@ program powersim, rclass
 	if mi("`errors'") local method "national"
 	else if ("`errors'" != "gov_specific" & "`errors'" != "national") {
         display as err "option method() invalid. Should be national or gov_specific"
+        exit 198
+    }
+	
+	if mi("`question'") local question "FC1_d"
+	else if !inlist("`question'", "FC1_d", "FC5_d", "FC8_d") {
+        display as err "option question() invalid. Should be FC1_d, FC5_d or FC8_d"
         exit 198
     }
 	
@@ -125,16 +132,16 @@ program powersim, rclass
 			
 			foreach id in `strata'{
 				
-				`gen' epsilon_v0  = rnormal(0, `=sd_village_`id'') if strata_id == `id' // Village-level random component baseline
+				`gen' epsilon_v0  = rnormal(0, `=sd_village_`id'_`question'') if strata_id == `id' // Village-level random component baseline
 				
-				`gen' epsilon_v1  = rnormal(0, `=sd_village_`id'') if strata_id == `id' // Village-level random component follow-up
+				`gen' epsilon_v1  = rnormal(0, `=sd_village_`id'_`question'') if strata_id == `id' // Village-level random component follow-up
 				
 				local gen replace
 			}
 		}
 		else{ // National-level errors
-			gen epsilon_v0  = rnormal(0, `=sd_village') // Village-level random component baseline
-			gen epsilon_v1  = rnormal(0, `=sd_village') // Village-level random component follow-up
+			gen epsilon_v0  = rnormal(0, `=sd_village_`question'') // Village-level random component baseline
+			gen epsilon_v1  = rnormal(0, `=sd_village_`question'') // Village-level random component follow-up
 		}
 		
 		
@@ -173,35 +180,35 @@ program powersim, rclass
 			local gen gen
 			foreach id in `strata'{
 				
-				`gen' epsilon_i0 = rnormal(0, `=sd_ind_`id'') if strata_id == `id' // Generate observation-level random component baseline
+				`gen' epsilon_i0 = rnormal(0, `=sd_ind_`id'_`question'') if strata_id == `id' // Generate observation-level random component baseline
 				
-				`gen' epsilon_i1 = rnormal(0, `=sd_ind_`id'') if strata_id == `id' // Generate observation-level random component follow-up
+				`gen' epsilon_i1 = rnormal(0, `=sd_ind_`id'_`question'') if strata_id == `id' // Generate observation-level random component follow-up
 				
 				local gen replace
 				
 			}
 			* Generate the outcome variable following specified effects
 			
-			gen y_ivds0 = epsilon_s + epsilon_d0 + epsilon_v0 + epsilon_i0 // Baseline
+			gen y_ivds0 = epsilon_s_`question' + epsilon_d0_`question' + epsilon_v0 + epsilon_i0 // Baseline
 			
 			gen y_ivds1 = 0.5*y_ivds0 + (cw_effect * cfw_only) + 				///
 				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
-				(g_effect * geo) + epsilon_s + epsilon_d1 + epsilon_v1 + epsilon_i1 // Follow-up
+				(g_effect * geo) + epsilon_s_`question' + epsilon_d1_`question' + epsilon_v1 + epsilon_i1 // Follow-up
 		}
 		else{ // National-level errors
 			
-			gen epsilon_i0 = rnormal(0, `=sd_ind') // Generate observation-level random component baseline
+			gen epsilon_i0 = rnormal(0, `=sd_ind_`question'') // Generate observation-level random component baseline
 				
-			gen epsilon_i1 = rnormal(0, `=sd_ind') // Generate observation-level random component follow-up
+			gen epsilon_i1 = rnormal(0, `=sd_ind_`question'') // Generate observation-level random component follow-up
 			
 			
 			* Generate the outcome variable following specified effects
 			
-			gen y_ivds0 = mu + epsilon_s0 + epsilon_d0 + epsilon_v0 + epsilon_i0 // Baseline
+			gen y_ivds0 = mu_`question' + epsilon_s0_`question' + epsilon_d0_`question' + epsilon_v0 + epsilon_i0 // Baseline
 			
-			gen y_ivds1 = mu + 0.5*y_ivds0 + (cw_effect * cfw_only) + 			///
-				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
-				(g_effect * geo) + epsilon_s1 + epsilon_d1 + epsilon_v1 + epsilon_i1 // Follow-up
+			gen y_ivds1 = mu_`question' + 0.5*y_ivds0 + (cw_effect * cfw_only) + 			///
+				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 						///
+				(g_effect * geo) + epsilon_s1_`question' + epsilon_d1_`question' + epsilon_v1 + epsilon_i1 // Follow-up
 			
 		}
 		
