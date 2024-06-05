@@ -19,7 +19,6 @@ program powersim, rclass
     version 18
     * Program arguments
     syntax, pc_selection(string)    ///
-			method(string)			///
 			sd(real)				///
 			path(string)			///
 			errors(string)			///
@@ -39,12 +38,6 @@ program powersim, rclass
 	if mi("`pc_selection'") local pc_selection "fixed"
 	else if ("`pc_selection'" != "fixed" & "`pc_selection'" != "random") {
         display as err "option pc_selection() invalid"
-        exit 198
-    }
-	
-	if mi("`method'") local method "default"
-	else if ("`method'" != "default" & "`method'" != "alt") {
-        display as err "option method() invalid. Should be default or alt"
         exit 198
     }
 	
@@ -104,25 +97,30 @@ program powersim, rclass
 		scalar cw_effect  = `sd' * `cfw_effect'
 		scalar cwc_effect = `sd' * `cfw_spillover'
 		
-		*expand 2 	if pure_control != 1 // Generate second ramification for CfN and CfW
-		expand 2 // Generate second ramification
-		
-		if "`method'" == "alt"{ // Reassign 8 PC to CfN randomly
-			tempvar rand n
-			gen `rand' = runiform() if pure_control == 1
-			sort cfn cfw `rand'
-			gen `n' = _n if cfn == 0 & cfw == 0
-			
-			drop if `n' <= 8
-			
-			tempvar rand n
-			gen `rand' = runiform() if cfn == 1
-			sort cfw pure_control `rand'
-			
-			gen `n' = _n if pure_control == 0 & cfw == 0
-			
-			expand 2 if `n' <= 8
-		}
+		** 8 CfN subdistricts will have 3 villages, while 12 of them will only have 2
+		tempvar rand n division
+		gen `rand' = runiform() if cfn == 1
+		gsort -cfn `rand'
+
+		gen `n' = _n if cfn == 1
+
+		gen 	`division' = 8  if `n' <= 8
+		replace `division' = 12 if inrange(`n', 9, 20)
+
+
+		** 8 PC subdistricts will have 1 village, while 6 of them will have 2
+		tempvar rand n
+		gen `rand' = runiform() if pure_control == 1
+		gsort -pure_control `rand'
+
+		gen `n' = _n if pure_control == 1
+
+		replace `division' = 8 if `n' <= 8
+		replace `division' = 6 if inrange(`n', 9, 14)
+
+
+		expand 3 if (`division' == 8 & cfn == 1)
+		expand 2 if (`division' == 12 | (`division' == 6 & pure_control == 1) | cfw == 1)
 		
 		
 		if "`errors'" == "gov_specific"{ // Governorate-specific errors
@@ -149,10 +147,10 @@ program powersim, rclass
 		
 		* Randomly assign groups to CfN_only and Geobundling in the CfN arm
 		tempvar temp ordering
-		gen `temp' 	  	= runiform() if cfn == 1
-		egen `ordering' = rank(`temp')
+		bys subd_id: gen `temp' = runiform() if cfn == 1
+		bys subd_id: egen `ordering' = rank(`temp')
 		
-		gen 	geo = 1 if inrange(`ordering', 1, 20)
+		gen 	geo = 1 if (`ordering' == 1 & inlist(`division', 8, 12) & cfn == 1)
 		replace geo = 0 if geo != 1
 
 		gen 	cfn_only = 1 if geo == 0 & cfn == 1
