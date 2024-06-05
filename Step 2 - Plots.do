@@ -21,6 +21,7 @@
 global main "C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
 global data "${main}\01 Data\comparisons"
 global figures "${main}\04 Figures"
+global real_data 	"${main}\Other stuff\ICC"
 
 global questions FC1_d FC5_d FC8_d
 
@@ -28,8 +29,6 @@ foreach quest in $questions{
 	cap mkdir "${figures}\\`quest'"
 	cap mkdir "${figures}\\`quest'\betas"
 }
-
-
 
 
 global comparisons g_cfnw g_cfn g_cfw g_all g_pure cfn_all cfw_all cfw_pure ///
@@ -43,9 +42,55 @@ cap which grc1leg
 if _rc ssc install grc1leg
 
 set scheme white_tableau
+graph set window fontface "Calibri"
 
 ****************************************************************************
-* Plotting
+**# Get mean and SD for each question (save in scalar)
+****************************************************************************
+
+import spss using "${real_data}\hh.sav", clear
+
+*ssc install asgen
+
+global assets HC10E HC11 HC14 HC15 HC17 HC19
+global foods FC1 FC2 FC3 FC4 FC5 FC6 FC7 FC8
+
+foreach asset in $assets{
+	
+	gen `asset'_d = (`asset' == 1)
+
+}
+
+foreach food in $foods{
+	
+	gen `food'_d = (inlist(`food',2,8,9))
+	
+}
+
+gen high_income = (inrange(windex5,4,5))
+
+keep if inlist(HH7, 11, 14,	15, 16,	17,	18,	20,	21,	22,	23,	26,	27,	29,	30,	31,	19,	25)
+
+replace HH7 = 1 if inlist(HH7, 15, 30)
+replace HH7 = 2 if inlist(HH7, 21, 22)
+replace HH7 = 3 if inlist(HH7, 11, 27, 29)
+
+keep *_d HH1 HH7 high_income stratum
+
+foreach quest in $questions{
+
+	qui sum `quest'
+	
+	local mu_`quest': dis %5.3f r(mean)
+	local mu_`quest': dis strtrim("`mu_`quest''")
+
+	local sd_`quest': dis %5.3f r(sd)
+	local sd_`quest': dis strtrim("`sd_`quest''")
+
+}
+
+****************************************************************************
+**# Plotting
 ****************************************************************************
 use "${data}\simulation_results.dta", clear
 			
@@ -141,13 +186,14 @@ foreach quest in $questions{
 			* Density plots
 			tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 						///
 			(kdensity tval_`comparison' if type == 2, lcolor(dkorange))							///
-			(kdensity tval_`comparison' if type == 0, lcolor(green)) if errors == "national",	///
+			(kdensity tval_`comparison' if type == 0, lcolor(green)) 							///
+			if errors == "national" & inrange(tval_`comparison', -5, 10),						///
 			xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 			///
 			legend(title(Scenarios, size(small))												///
 			order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
 			position(bottom) rows(1) si(vsmall)) saving(`comparison'_nat, replace) 				///
 			subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 								///
-			note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+			note("Power 40: `power_0'%; Power 50: `power_1'%; Power 60: `power_2'%", s(vsmall))
 			
 			local ++i
 		}
@@ -176,13 +222,14 @@ foreach quest in $questions{
 			* Density plots
 			tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 							///
 			(kdensity tval_`comparison' if type == 2, lcolor(dkorange))								///
-			(kdensity tval_`comparison' if type == 0, lcolor(green)) if errors == "gov_specific",	///
+			(kdensity tval_`comparison' if type == 0, lcolor(green)) 								///
+			if errors == "gov_specific" & inrange(tval_`comparison', -5, 10),						///
 			xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 				///
 			legend(title(Scenarios, size(small))													///
 			order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")							///
 			position(bottom) rows(1) si(vsmall)) saving(`comparison'_gov, replace) 					///
 			subtitle(`vallab', size(small))	ylabel(,labs(tiny)) 									///
-			note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+			note("Power 40: `power_0'%; Power 50: `power_1'%; Power 60: `power_2'%", s(vsmall))
 			
 			local ++i
 		}
@@ -199,11 +246,11 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 					///
 		saving(s`scenario'_nat, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
-		graph display, ysize(9)
+		graph display, ysize(9) xsize()
 		
-		graph export "${figures}\\`quest'\Power_s`scenario'_national.png", replace // Save final graph
+		graph export "${figures}\\`quest'\Power_s`scenario'_national.png", replace width(1200) height(1800) // Save final graph
 
 
 		grc1leg g_cfnw_c_nat.gph g_cfn_c_nat.gph g_cfw_c_nat.gph g_all_c_nat.gph 			///
@@ -213,11 +260,11 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 					///
 		saving(s`scenario'_nat_c, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
-		graph export "${figures}\\`quest'\Power_s`scenario'_national_controls.png", replace // Save final graph
+		graph export "${figures}\\`quest'\Power_s`scenario'_national_controls.png", replace width(1200) height(1800) // Save final graph
 		
 
 		grc1leg g_cfnw_gov.gph g_cfn_gov.gph g_cfw_gov.gph g_all_gov.gph g_pure_gov.gph 	///
@@ -227,11 +274,11 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall))		///
 		saving(s`scenario'_gov, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
-		graph export "${figures}\\`quest'\Power_s`scenario'_gov.png", replace // Save final graph
+		graph export "${figures}\\`quest'\Power_s`scenario'_gov.png", replace width(1200) height(1800) // Save final graph
 
 
 		grc1leg g_cfnw_c_gov.gph g_cfn_c_gov.gph g_cfw_c_gov.gph g_all_c_gov.gph 			///
@@ -241,11 +288,11 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 					///
 		saving(s`scenario'_gov_c, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
-		graph export "${figures}\\`quest'\Power_s`scenario'_gov_controls.png", replace // Save final graph
+		graph export "${figures}\\`quest'\Power_s`scenario'_gov_controls.png", width(1200) height(1800) replace // Save final graph
 		
 		
 		
