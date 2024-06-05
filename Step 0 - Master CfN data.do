@@ -40,10 +40,10 @@ import spss using "${real_data}\hh.sav", clear
 FC1 not eating enough for lack of money
 FC2 Unable to eat healthy and nutritious food for lack of money
 FC4 Skip a meal
-FC5 Ate less than thought**
+FC5 Ate less than thought
 FC6 Ran out of food
 FC7 Hungry but did not eat
-FC8 Went without eating for whole day**
+FC8 Went without eating for whole day
 */
 
 global assets HC10E HC11 HC14 HC15 HC17 HC19
@@ -71,7 +71,6 @@ replace HH7 = 1 if inlist(HH7, 15, 30)
 replace HH7 = 2 if inlist(HH7, 21, 22)
 replace HH7 = 3 if inlist(HH7, 11, 27, 29)
 
-
 foreach quest in $questions{
 
 	levelsof HH7, local(strata)
@@ -81,6 +80,10 @@ foreach quest in $questions{
 		qui sum `quest' if HH7 == `id'
 		scalar mu_`id'_`quest' = r(mean)
 	}
+
+
+
+	levelsof HH7, local(strata)
 
 	foreach id in `strata'{
 		
@@ -102,7 +105,6 @@ foreach quest in $questions{
 	scalar sd_strata_`quest' 	= exp(b[1, 2])
 	scalar sd_subd_`quest' 		= exp(b[1, 3])
 }
-
 
 ****************************************************************************
 **# Data simulation (governorate-specific)
@@ -132,7 +134,6 @@ input
 	19
 	25
 end
-
 
 * Create observations equivalent to the number of subdistricts in each stratum
 expand 2 if inlist(strata_id, 11, 15, 21, 22, 27, 29, 30)
@@ -170,7 +171,10 @@ foreach quest in $questions{
 		local gen replace
 	}
 
+
+
 	bys strata_id: ereplace epsilon_s_`quest' = mean(epsilon_s_`quest') // has to be constant within strata
+
 
 	levelsof strata_id, local(sim_local2)
 
@@ -224,7 +228,7 @@ end
 
 
 foreach quest in $questions{
-	
+
 	* Create the strata random component
 	gen epsilon_s0_`quest' = rnormal(0, mu_`quest')
 	gen epsilon_s1_`quest' = rnormal(0, mu_`quest')
@@ -258,15 +262,17 @@ bys strata_id: gen subd_id = string(strata_id) + "-" + "00" + string(_n)
 
 
 foreach quest in $questions{
-
+	
 	bys strata_id: ereplace epsilon_s0_`quest' = mean(epsilon_s0_`quest') // has to be constant within strata
 	bys strata_id: ereplace epsilon_s1_`quest' = mean(epsilon_s1_`quest') // has to be constant within strata
+
 
 	* Create the strata random component
 	gen epsilon_d0_`quest' = rnormal(0, sd_subd_`quest') // Subdistrict-level random component baseline
 	gen epsilon_d1_`quest' = rnormal(0, sd_subd_`quest') // Subdistrict-level random component follow-up
-
+	
 }
+
 
 compress
 
