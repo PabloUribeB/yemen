@@ -80,7 +80,7 @@ global stats reject_beta1_1 	= r(reject_beta1_1)		///
 
 			
 * Call the program
-do "${do_files}\powersim.do"
+do "${do_files}\powersim 2.do"
 
 
 
@@ -199,7 +199,7 @@ foreach quest in $questions{
 					cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 					cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd_`quest'') 	///
 					survey_cfn(40) survey_cfw(40) survey_cfwc(40) survey_geo(40)	///
-					survey_pure(40) method(alt) errors(`error') question(`quest')
+					survey_pure(40) errors(`error') question(`quest')
 
 			tempfile fixed_alt40
 			save `fixed_alt40', replace
@@ -210,7 +210,7 @@ foreach quest in $questions{
 					cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 					cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd_`quest'') 	///
 					survey_cfn(50) survey_cfw(50) survey_cfwc(50) survey_geo(50)	///
-					survey_pure(50) method(alt) errors(`error') question(`quest')
+					survey_pure(50) errors(`error') question(`quest')
 
 			tempfile fixed_alt50
 			save `fixed_alt50', replace
@@ -221,7 +221,7 @@ foreach quest in $questions{
 					cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 					cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd_`quest'') 	///
 					survey_cfn(60) survey_cfw(60) survey_cfwc(60) survey_geo(60)	///
-					survey_pure(60) method(alt) errors(`error') question(`quest')
+					survey_pure(60) errors(`error') question(`quest')
 
 			
 			append using `fixed_alt40' `fixed_alt50', gen(type)
