@@ -61,7 +61,7 @@ program powersim, rclass
 		global path "`path'"
 	}
 	
-	*quietly{
+	quietly{
 		
 		drop _all
 		
@@ -344,7 +344,7 @@ program powersim, rclass
 				
 		local tval_cfw_pure_c = r(table)[3,1]
 
-	*}
+	}
 	
 	// RETURN RESULTS
 	return scalar reject_g_cfnw 	= `reject_g_cfnw'

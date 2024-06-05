@@ -248,7 +248,7 @@ foreach quest in $questions{
 		saving(s`scenario'_nat, replace)													///
 		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
-		graph display, ysize(9) xsize()
+		graph display, ysize(9)
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_national.png", replace width(1200) height(1800) // Save final graph
 
