@@ -243,7 +243,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_national_1.png", replace // Save final graph
 
@@ -253,7 +253,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_national_controls_1.png", replace // Save final graph
 		
@@ -264,7 +264,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_gov_1.png", replace // Save final graph
 
@@ -274,7 +274,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_gov_controls_1.png", replace // Save final graph
 		
@@ -286,7 +286,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall))										///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_national_2.png", replace // Save final graph
 
@@ -296,7 +296,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_national_controls_2.png", replace // Save final graph
 		
@@ -307,7 +307,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall))										///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_gov_2.png", replace // Save final graph
 
@@ -317,7 +317,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\Power_s`scenario'_gov_controls_2.png", replace // Save final graph
 		
@@ -369,7 +369,7 @@ foreach quest in $questions{
 			order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")					///
 			position(bottom) rows(1) si(vsmall)) saving(`comparison'_nat, replace) 			///
 			subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 					///
-			note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+			note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%; Power alt-60 = `power_2'%", s(vsmall))
 			
 			local ++i
 		}
@@ -403,7 +403,7 @@ foreach quest in $questions{
 			order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
 			position(bottom) rows(1) si(vsmall)) saving(`comparison'_gov, replace) 				///
 			subtitle({&beta}`vallab', size(small))	ylabel(,labs(tiny)) 						///
-			note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%;" "Power alt-60 = `power_2'%", s(vsmall))
+			note("Power alt-40 = `power_0'%; Power alt-50 = `power_1'%; Power alt-60 = `power_2'%", s(vsmall))
 			
 			local ++i
 		}
@@ -420,7 +420,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_national_1.png", replace // Save final graph
 
@@ -430,7 +430,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_national_controls_1.png", replace // Save final graph
 		
@@ -441,7 +441,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_gov_1.png", replace // Save final graph
 
@@ -451,7 +451,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_gov_controls_1.png", replace // Save final graph
 		
@@ -463,7 +463,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall))									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny))  
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_national_2.png", replace // Save final graph
 
@@ -473,7 +473,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_national_controls_2.png", replace // Save final graph
 		
@@ -484,7 +484,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall))									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_gov_2.png", replace // Save final graph
 
@@ -494,7 +494,7 @@ foreach quest in $questions{
 		title(Power simulations (Geo=${geo_effect}; CfN=${cfn_effect}; CfW=${cfw_effect}; 	///
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of {&beta}'s, size(vsmall)) 									///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys" "that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village. Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1)." "Number of simulations = 1000. Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 		
 		graph export "${figures}\\`quest'\betas\Power_s`scenario'_gov_controls_2.png", replace // Save final graph
 		
