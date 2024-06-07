@@ -33,7 +33,7 @@ Scenario 6: CFN:0.23 CFW:0.1  Geo:0.4  CFW-Control: 0.03
 global main 		"C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
 global data 		"${main}\01 Data"
 global real_data 	"${main}\Other stuff\ICC"
-global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen"
+global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen\power"
 
 global reps 1000 // Enter desired number of Monte-Carlo simulations
 
