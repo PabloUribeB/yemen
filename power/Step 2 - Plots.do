@@ -133,12 +133,14 @@ foreach quest in $questions{
 			global cfw_effect 0.1
 			global geo_effect 0.3
 			global cfw_spillover 0
+			local max = 10
 		}
 		else if  `scenario' == 3 {
 			global cfn_effect 0.23
 			global cfw_effect 0.1
 			global geo_effect 0.6
 			global cfw_spillover 0
+			local max = 15
 		}
 		else if  `scenario' == 4 {
 			global cfn_effect 0.2
@@ -157,6 +159,7 @@ foreach quest in $questions{
 			global cfw_effect 0.1
 			global geo_effect 0.5
 			global cfw_spillover 0.03
+			local max = 10
 		}
 
 		preserve
@@ -187,7 +190,7 @@ foreach quest in $questions{
 			tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 						///
 			(kdensity tval_`comparison' if type == 2, lcolor(dkorange))							///
 			(kdensity tval_`comparison' if type == 0, lcolor(green)) 							///
-			if errors == "national" & inrange(tval_`comparison', -5, 10),						///
+			if errors == "national" & inrange(tval_`comparison', -5, `max'),					///
 			xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 			///
 			legend(title(Scenarios, size(small))												///
 			order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")						///
@@ -223,7 +226,7 @@ foreach quest in $questions{
 			tw (kdensity tval_`comparison' if type == 1, lcolor(dknavy)) 							///
 			(kdensity tval_`comparison' if type == 2, lcolor(dkorange))								///
 			(kdensity tval_`comparison' if type == 0, lcolor(green)) 								///
-			if errors == "gov_specific" & inrange(tval_`comparison', -5, 10),						///
+			if errors == "gov_specific" & inrange(tval_`comparison', -5, `max'),					///
 			xline(`critical' -`critical', lcolor(gray)) xtitle(t-stat) ytitle(Density) 				///
 			legend(title(Scenarios, size(small))													///
 			order(1 "Alternative-40" 2 "Alternative-50" 3 "Alternative-60")							///
