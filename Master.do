@@ -22,3 +22,7 @@ statapush, ${tokens} message(First batch of plots)
 
 do "${dos}\Step 2 - Plots 2.do"
 statapush, ${tokens} message(FINISHED RUNNING)
+
+
+do "${dos}\randomization_inference\Step 1 - Simulations.do"
+statapush, ${tokens} message(Finished running)
