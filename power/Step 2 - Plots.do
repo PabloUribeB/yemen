@@ -249,7 +249,7 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 					///
 		saving(s`scenario'_nat, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
@@ -263,7 +263,7 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 					///
 		saving(s`scenario'_nat_c, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
@@ -277,7 +277,7 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall))		///
 		saving(s`scenario'_gov, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
@@ -291,7 +291,7 @@ foreach quest in $questions{
 		CfW-controls=${cfw_spillover}), size(small))										///
 		subtitle(Distribution of t-stats, size(vsmall)) 					///
 		saving(s`scenario'_gov_c, replace)													///
-		note("{it:Note:} In all specifications, 8 PCs are switched to CfN. The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
+		note("{it:Note:} The number after Alternative corresponds to the number of surveys that are carried out in each village." "Dashed lines represent an arbitrarily chosen critical value of 1.7 ({&alpha} = 0.1). Number of simulations = 1000." "Question: `detail'. Mean: `mu_`quest''; SD: `sd_`quest''", s(tiny)) 
 
 		graph display, ysize(9)
 		
