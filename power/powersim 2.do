@@ -65,7 +65,116 @@ program powersim, rclass
 		
 		drop _all
 		
-		use "${path}\cfn_selected_`errors'.dta"
+		gen strata_id = .
+
+		* Create the strata IDs
+		set obs 17
+		local nums "11 14 15 16 17 18 20 21 22 23 26 27 29 30 31 19 25"
+		
+		local counts = 1
+		foreach value in `nums'{
+			replace strata_id = `value' in `counts'
+			local ++counts
+		}
+		
+		if "`errors'" == "gov_specific"{ // Governorate-level errors
+
+			* Create observations equivalent to the number of subdistricts in each stratum
+			expand 2 if inlist(strata_id, 11, 15, 21, 22, 27, 29, 30)
+
+			expand 3 if inlist(strata_id, 16, 20, 25)
+
+			expand 4 if inlist(strata_id, 14, 18, 23, 31, 19)
+
+			expand 5 if strata_id == 26
+
+			expand 6 if strata_id == 17
+
+			* Assign one subdistrict from each stratum to CfN
+			bys strata_id: gen cfn = (_n == 1)
+
+			* Those with more than 4 subdistricts get 2 assigned to PC, and stratum 18 (4 subdist.) also gets a second one assigned to PC
+			bys strata_id (cfn): replace cfn = 1 if _n == 1 & (_N > 4 | strata_id == 18)
+
+			* Group the 7 strata with just one subdistrict remaining to three clusters based on results from cluster analysis
+			replace strata_id = 1 if inlist(strata_id, 15, 30)
+			replace strata_id = 2 if inlist(strata_id, 21, 22)
+			replace strata_id = 3 if inlist(strata_id, 11, 27, 29)
+
+			* Subdistrict ID
+			bys strata_id: gen subd_id = string(strata_id) + "-" + "00" + string(_n)
+
+			levelsof strata_id, local(sim_local)
+
+
+			* Create the strata random component
+			local gen gen
+			foreach id in `sim_local'{
+				`gen' epsilon_s_`question' = mu_`id'_`question' if strata_id == `id'
+				local gen replace
+			}
+
+
+
+			bys strata_id: ereplace epsilon_s_`question' = mean(epsilon_s_`question') // has to be constant within strata
+
+
+			levelsof strata_id, local(sim_local2)
+
+			* Create the strata random component
+			local gen gen
+			foreach id in `sim_local2'{
+				
+				`gen' epsilon_d0_`question' = rnormal(0, sd_subd_`id'_`question') if strata_id == `id' // Subdistrict-level random component baseline
+				
+				`gen' epsilon_d1_`question' = rnormal(0, sd_subd_`id'_`question') if strata_id == `id' // Subdistrict-level random component follow-up
+				
+				local gen replace
+				
+			}
+				
+		}
+		else if "`errors'" == "national"{ // National-level errors
+
+			* Create the strata random component
+			gen epsilon_s0_`question' = rnormal(0, mu_`question')
+			gen epsilon_s1_`question' = rnormal(0, mu_`question')
+
+			* Create observations equivalent to the number of subdistricts in each stratum
+			expand 2 if inlist(strata_id, 11, 15, 21, 22, 27, 29, 30)
+
+			expand 3 if inlist(strata_id, 16, 20, 25)
+
+			expand 4 if inlist(strata_id, 14, 18, 23, 31, 19)
+
+			expand 5 if strata_id == 26
+
+			expand 6 if strata_id == 17
+
+			* Assign one subdistrict from each stratum to CfN
+			bys strata_id: gen cfn = (_n == 1)
+
+			* Those with more than 4 subdistricts get 2 assigned to PC, and stratum 18 (4 subdist.) also gets a second one assigned to PC
+			bys strata_id (cfn): replace cfn = 1 if _n == 1 & (_N > 4 | strata_id == 18)
+
+			* Group the 7 strata with just one subdistrict remaining to three clusters based on results from cluster analysis
+			replace strata_id = 1 if inlist(strata_id, 15, 30)
+			replace strata_id = 2 if inlist(strata_id, 21, 22)
+			replace strata_id = 3 if inlist(strata_id, 11, 27, 29)
+
+			* Subdistrict ID
+			bys strata_id: gen subd_id = string(strata_id) + "-" + "00" + string(_n)
+				
+			bys strata_id: ereplace epsilon_s0_`question' = mean(epsilon_s0_`question') // has to be constant within strata
+			bys strata_id: ereplace epsilon_s1_`question' = mean(epsilon_s1_`question') // has to be constant within strata
+
+
+			* Create the strata random component
+			gen epsilon_d0_`question' = rnormal(0, sd_subd_`question') // Subdistrict-level random component baseline
+			gen epsilon_d1_`question' = rnormal(0, sd_subd_`question') // Subdistrict-level random component follow-up
+				
+		}
+		
 		
 		if "`pc_selection'" == "fixed"{ //Choose 1 PC for each stratum (2 in stratum 17)
 			tempvar rand n

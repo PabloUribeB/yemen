@@ -20,7 +20,6 @@ program powersim, rclass
     * Program arguments
     syntax, pc_selection(string)    ///
 			sd(real)				///
-			path(string)			///
 			in_path(string)			///
 			errors(string)			///
 			question(string)		///
@@ -55,14 +54,6 @@ program powersim, rclass
         exit 198
     }
 	
-	if mi("`path'") {
-        display as err "path to folder must be specified in path()"
-        exit 198
-    }
-	else if !mi("`path'"){
-		global path "`path'"
-	}
-	
 	if mi("`in_path'") {
         display as err "path to RI folder must be specified in in_path()"
         exit 198
@@ -75,7 +66,116 @@ program powersim, rclass
 		
 		drop _all
 		
-		use "${path}\cfn_selected_`errors'.dta"
+		gen strata_id = .
+
+		* Create the strata IDs
+		set obs 17
+		local nums "11 14 15 16 17 18 20 21 22 23 26 27 29 30 31 19 25"
+		
+		local counts = 1
+		foreach value in `nums'{
+			replace strata_id = `value' in `counts'
+			local ++counts
+		}
+		
+		if "`errors'" == "gov_specific"{ // Governorate-level errors
+
+			* Create observations equivalent to the number of subdistricts in each stratum
+			expand 2 if inlist(strata_id, 11, 15, 21, 22, 27, 29, 30)
+
+			expand 3 if inlist(strata_id, 16, 20, 25)
+
+			expand 4 if inlist(strata_id, 14, 18, 23, 31, 19)
+
+			expand 5 if strata_id == 26
+
+			expand 6 if strata_id == 17
+			
+			* Assign one subdistrict from each stratum to CfN
+			bys strata_id: gen cfn = (_n == 1)
+
+			* Those with more than 4 subdistricts get 2 assigned to PC, and stratum 18 (4 subdist.) also gets a second one assigned to PC
+			bys strata_id (cfn): replace cfn = 1 if _n == 1 & (_N > 4 | strata_id == 18)
+
+			* Group the 7 strata with just one subdistrict remaining to three clusters based on results from cluster analysis
+			replace strata_id = 1 if inlist(strata_id, 15, 30)
+			replace strata_id = 2 if inlist(strata_id, 21, 22)
+			replace strata_id = 3 if inlist(strata_id, 11, 27, 29)
+
+			* Subdistrict ID
+			bys strata_id: gen subd_id = string(strata_id) + "-" + "00" + string(_n)
+
+			levelsof strata_id, local(sim_local)
+
+
+			* Create the strata random component
+			local gen gen
+			foreach id in `sim_local'{
+				`gen' epsilon_s_`question' = mu_`id'_`question' if strata_id == `id'
+				local gen replace
+			}
+
+
+
+			bys strata_id: ereplace epsilon_s_`question' = mean(epsilon_s_`question') // has to be constant within strata
+
+
+			levelsof strata_id, local(sim_local2)
+
+			* Create the subdistrict random component
+			local gen gen
+			foreach id in `sim_local2'{
+				
+				`gen' epsilon_d0_`question' = rnormal(0, sd_subd_`id'_`question') if strata_id == `id' // Subdistrict-level random component baseline
+				
+				`gen' epsilon_d1_`question' = rnormal(0, sd_subd_`id'_`question') if strata_id == `id' // Subdistrict-level random component follow-up
+				
+				local gen replace
+				
+			}
+				
+		}
+		else if "`errors'" == "national"{ // National-level errors
+
+			* Create the strata random component
+			gen epsilon_s0_`question' = rnormal(0, mu_`question')
+			gen epsilon_s1_`question' = rnormal(0, mu_`question')
+
+			* Create observations equivalent to the number of subdistricts in each stratum
+			expand 2 if inlist(strata_id, 11, 15, 21, 22, 27, 29, 30)
+
+			expand 3 if inlist(strata_id, 16, 20, 25)
+
+			expand 4 if inlist(strata_id, 14, 18, 23, 31, 19)
+
+			expand 5 if strata_id == 26
+
+			expand 6 if strata_id == 17
+			
+			* Assign one subdistrict from each stratum to CfN
+			bys strata_id: gen cfn = (_n == 1)
+
+			* Those with more than 4 subdistricts get 2 assigned to PC, and stratum 18 (4 subdist.) also gets a second one assigned to PC
+			bys strata_id (cfn): replace cfn = 1 if _n == 1 & (_N > 4 | strata_id == 18)
+
+			* Group the 7 strata with just one subdistrict remaining to three clusters based on results from cluster analysis
+			replace strata_id = 1 if inlist(strata_id, 15, 30)
+			replace strata_id = 2 if inlist(strata_id, 21, 22)
+			replace strata_id = 3 if inlist(strata_id, 11, 27, 29)
+
+			* Subdistrict ID
+			bys strata_id: gen subd_id = string(strata_id) + "-" + "00" + string(_n)
+				
+			bys strata_id: ereplace epsilon_s0_`question' = mean(epsilon_s0_`question') // has to be constant within strata
+			bys strata_id: ereplace epsilon_s1_`question' = mean(epsilon_s1_`question') // has to be constant within strata
+
+
+			* Create the strata random component
+			gen epsilon_d0_`question' = rnormal(0, sd_subd_`question') // Subdistrict-level random component baseline
+			gen epsilon_d1_`question' = rnormal(0, sd_subd_`question') // Subdistrict-level random component follow-up
+				
+		}
+		
 		
 		if "`pc_selection'" == "fixed"{ //Choose 1 PC for each stratum (2 in stratum 17)
 			tempvar rand n
@@ -129,8 +229,7 @@ program powersim, rclass
 		replace division = 6 if inrange(`n', 9, 14)
 
 
-		expand 3 if (division == 8 & cfn == 1)
-		expand 2 if (division == 12 | (division == 6 & pure_control == 1) | cfw == 1)
+		expand 3 // Generate 3 villages in each subcounty
 		
 		
 		if "`errors'" == "gov_specific"{ // Governorate-specific errors
@@ -147,7 +246,7 @@ program powersim, rclass
 				local gen replace
 			}
 		}
-		else{ // National-level errors
+		else if "`errors'" == "national"{ // National-level errors
 			gen epsilon_v0  = rnormal(0, `=sd_village_`question'') // Village-level random component baseline
 			gen epsilon_v1  = rnormal(0, `=sd_village_`question'') // Village-level random component follow-up
 		}
@@ -157,16 +256,6 @@ program powersim, rclass
 		gen village_id = _n 	// Cluster variable at the village level
 		
 		encode subd_id, gen(en_subd_id)
-
-		preserve
-
-		keep subd_id village_id cfn cfw division
-		compress
-
-		cap save "${in_path}\main.dta"
-				
-		restore
-		
 		
 		* Randomly assign groups to CfN_only and Geobundling in the CfN arm
 		tempvar temp ordering
@@ -181,15 +270,24 @@ program powersim, rclass
 
 		* Randomly assign groups to CfW_only and CfW_control in the CfW arm
 		tempvar temp ordering
-		gen `temp' 	  	= runiform() if cfw == 1
-		egen `ordering' = rank(`temp')
+		bys subd_id: gen `temp' 	  = runiform() if cfw == 1
+		bys subd_id: egen `ordering'  = rank(`temp')
 		
-		gen 	cfw_only = 1 if inrange(`ordering', 1, 20)
+		gen 	cfw_only = 1 if `ordering' == 1
 		replace cfw_only = 0 if cfw_only != 1
 
 		gen 	cfw_control = 1 if cfw_only == 0 & cfw == 1
 		replace cfw_control = 0 if mi(cfw_control)
-
+		
+		* Drop one village if one of 12 CfN subd. with two observed villages, or one of
+		* 6 PC with two villages, or a CfW subd. Drop two villages if one of the 8 PC subd.
+		* with only 1 village.
+		tempvar nor
+		bys subd_id (geo cfw_only): gen `nor' = _n
+		
+		drop if (`nor' == 1 & (division == 12 | (division == 6 & pure_control == 1) | cfw == 1)) ///
+				| (inrange(`nor', 1, 2) & division == 8 & pure_control == 1)
+		
 		expand `survey_pure' if pure_control == 1 	// Expand in PC
 		expand `survey_cfwc' if cfw_control == 1 	// Expand in CfW_control
 		expand `survey_cfw'  if cfw_only == 1 		// Expand in CfW_only
@@ -216,7 +314,7 @@ program powersim, rclass
 				(cwc_effect * cfw_control) + (cn_effect * cfn_only) + 			///
 				(g_effect * geo) + epsilon_s_`question' + epsilon_d1_`question' + epsilon_v1 + epsilon_i1 // Follow-up
 		}
-		else{ // National-level errors
+		else if "`errors'" == "national"{ // National-level errors
 			
 			gen epsilon_i0 = rnormal(0, `=sd_ind_`question'') // Generate observation-level random component baseline
 				
@@ -233,34 +331,33 @@ program powersim, rclass
 			
 		}
 		
-
-		replace cfw = 0 if cfw_control == 1
-		replace cfw = 1 if geo == 1
-
-		gen cfw_spillover = 0
-		replace cfw_spillover = 1 if (cfn_only == 1 | cfw_control == 1)
-		
 		// Regressions
 		
 		***** Regression 2		
 		
+		replace cfw = 0 if cfw_control == 1 // Change to look at spillovers
+		replace cfw = 1 if geo == 1
+
 		* Controls
 		reg y_ivds1 cfw geo y_ivds0 i.en_subd_id, cluster(village_id)
 		
-		scalar real_beta = r(table)[1,2]
+		scalar real_beta = r(table)[1,2] // Save beta as "real beta"
 
-		keep y_* subd_id village_id
+		keep y_* subd_id village_id // Keep id variables and "observed" Y for regression
 
 		save "${in_path}\base.dta", replace
 	
+		* Simulate alternative random assignments
 		simulate beta_inner = r(beta_inner), reps(`sims'): inner, in_path(${in_path})
 		
 		erase "${in_path}\base.dta"
 
+		* Count share of betas from alternative assignments above real beta (1tail pval)
 		count if beta_inner >= real_beta
 
 		local onetail_pval = r(N) / `sims'
 
+		* Count share of abs(betas) from alternative assignments above real beta (2tail pval)
 		count if abs(beta_inner) >= real_beta
 
 		local twotail_pval = r(N) / `sims'

@@ -47,7 +47,7 @@ graph set window fontface "Calibri"
 ****************************************************************************
 **# Plotting
 ****************************************************************************
-use "${data}\simulation_results.dta", clear
+use "${data}\simulation_results_RI.dta", clear
 
 
 local counter = 1

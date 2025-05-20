@@ -92,7 +92,7 @@ foreach quest in $questions{
 ****************************************************************************
 **# Plotting
 ****************************************************************************
-use "${data}\simulation_results.dta", clear
+use "${data}\simulation_results_comparisons.dta", clear
 			
 labvars tval_g_cfnw tval_g_cfn tval_g_cfw tval_g_all tval_g_pure 		///
 		tval_cfn_all tval_cfw_all tval_cfw_pure tval_g_cfnw_c 			///

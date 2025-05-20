@@ -31,7 +31,6 @@ Scenario 6: CFN:0.23 CFW:0.1  Geo:0.4  CFW-Control: 0.03
 ****************************************************************************
 
 global main 		"C:\Users\Pablo Uribe\Dropbox\Arlen\4. Pablo"
-global data 		"${main}\01 Data"
 global data_RI 		"${main}\01 Data\randomization_inference"
 global real_data 	"${main}\Other stuff\ICC"
 global do_files 	"C:\Users\Pablo Uribe\Documents\GitHub\wb\yemen\randomization_inference"
@@ -44,72 +43,17 @@ global questions FC1_d FC5_d FC8_d
 global stats 	onetail_pval = r(onetail_pval) 			///
 				twotail_pval = r(twotail_pval)
 
+cap mkdir "${data_RI}"
 			
 * Call the programs
 do "${do_files}\inner.do"
 do "${do_files}\general.do"
 
 ****************************************************************************
-**# Real data error decomposition
+**# Real data error decomposition (call it from the do)
 ****************************************************************************
 
-import spss using "${real_data}\hh.sav", clear
-
-*ssc install asgen
-
-global assets HC10E HC11 HC14 HC15 HC17 HC19
-global foods FC1 FC2 FC3 FC4 FC5 FC6 FC7 FC8
-
-foreach asset in $assets{
-	
-	gen `asset'_d = (`asset' == 1)
-
-}
-
-foreach food in $foods{
-	
-	gen `food'_d = (inlist(`food',2,8,9))
-	
-}
-
-gen high_income = (inrange(windex5,4,5))
-
-keep if inlist(HH7, 11, 14,	15, 16,	17,	18,	20,	21,	22,	23,	26,	27,	29,	30,	31,	19,	25)
-
-replace HH7 = 1 if inlist(HH7, 15, 30)
-replace HH7 = 2 if inlist(HH7, 21, 22)
-replace HH7 = 3 if inlist(HH7, 11, 27, 29)
-
-keep *_d HH1 HH7 high_income stratum
-
-foreach quest in $questions{
-
-	levelsof HH7, local(strata)
-
-	foreach id in `strata'{
-
-		qui mixed `quest' || stratum: || HH1: if HH7 == `id', stddev
-
-		matrix b = e(b)
-
-		scalar mu_`id'_`quest' 			= exp(b[1, 1])
-		scalar sd_village_`id'_`quest' 	= exp(b[1, 3])
-		scalar sd_ind_`id'_`quest' 		= exp(b[1, 4])
-		
-	}
-
-	mixed `quest' || HH7: || stratum: || HH1: , stddev
-
-	matrix b = e(b)
-
-	scalar mu_`quest'			= exp(b[1, 1])
-	scalar sd_village_`quest' 	= exp(b[1, 4])
-	scalar sd_ind_`quest' 		= exp(b[1, 5])
-
-
-	sum `quest'
-	scalar sd_`quest' = r(sd)
-}
+do "${do_files}\aux - Error decomposition.do"
 	
 ****************************************************************************
 * Monte-Carlo simulations
@@ -156,12 +100,10 @@ foreach quest in $questions{
 				global geo_effect 0.5
 				global cfw_spillover 0.03
 			}
-			
-			cap erase "${data_RI}\main.dta"
 
 			* Fixed Pure Controls with alt method (40 surveys per village and 20 PCs)
 			simulate ${stats}, reps(${reps}): powersim, 							///
-					pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
+					pc_selection(fixed) geo_effect(${geo_effect}) 					///
 					cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 					cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd_`quest'') 	///
 					survey_cfn(40) survey_cfw(40) survey_cfwc(40) survey_geo(40)	///
@@ -173,7 +115,7 @@ foreach quest in $questions{
 			
 			
 			simulate ${stats}, reps(${reps}): powersim, 							///
-					pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
+					pc_selection(fixed) geo_effect(${geo_effect}) 					///
 					cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 					cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd_`quest'') 	///
 					survey_cfn(50) survey_cfw(50) survey_cfwc(50) survey_geo(50)	///
@@ -185,7 +127,7 @@ foreach quest in $questions{
 			
 			
 			simulate ${stats}, reps(${reps}): powersim, 							///
-					pc_selection(fixed) path(${data}) geo_effect(${geo_effect}) 	///
+					pc_selection(fixed) geo_effect(${geo_effect}) 					///
 					cfn_effect(${cfn_effect}) cfw_effect(${cfw_effect}) 			///
 					cfw_spillover(${cfw_spillover}) alpha(0.1) sd(`=sd_`quest'') 	///
 					survey_cfn(60) survey_cfw(60) survey_cfwc(60) survey_geo(60)	///
@@ -234,7 +176,7 @@ append using "${data_RI}\simulation_results_s2_gov_specific_FC1_d.dta" 		///
 
 compress
 
-save "${data_RI}\simulation_results.dta", replace
+save "${data_RI}\simulation_results_RI.dta", replace
 
 
 foreach quest in $questions{
